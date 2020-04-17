@@ -59,11 +59,28 @@ int main()
         // ntohs sirve para obtener el puerto
         printf("connection established with IP : %s and PORT : %d\n",  
                                             ip, ntohs(peer_addr.sin_port)); 
-        //Comunicacion
-        recv(acc, buffer2, 256, 0); 
-        printf("Client : %s\n", buffer2); 
-        strcpy(buffer1, "Hello"); 
-        send(acc, buffer1, 256, 0); 
+        while(strcmp(buffer2,"3")!=0){
+		strcpy(buffer1, "\n1. Opcion 1 \n2. Opcion 2\n3. Exit\n"); 
+        	send(acc, buffer1, 256, 0);
+		printf("Se envio el Menu\n");
+		recv(acc, buffer2, 256, 0);
+		printf("Client: %s\n",buffer2);
+		if(strcmp(buffer2,"1")==0){
+			printf("Eligio 1\n ");
+			strcpy(buffer1, "Elegiste 1"); 
+        		send(acc, buffer1, 256, 0);
+		} else 
+		if(strcmp(buffer2,"2")==0){
+			printf("Eligio 2\n ");
+			strcpy(buffer1, "Elegiste 2"); 
+        		send(acc, buffer1, 256, 0);
+		} else 
+		if(strcmp(buffer2,"3")==0){
+			printf("Eligio 3\n ");
+			strcpy(buffer1, "Exit"); 
+        		send(acc, buffer1, 256, 0); 
+		}
+	} 
     }  
     return 0; 
 } 
