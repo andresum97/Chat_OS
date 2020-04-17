@@ -55,9 +55,15 @@ int main()
     else
         printf("Error in Connection\n"); 
     //Comunicacion
-    strcpy(buffer2, "Hello"); 
-    send(client, buffer2, 256, 0);  
-    recv(client, buffer1, 256, 0); 
-    printf("Server : %s\n", buffer1); 
-    return 0; 
+    char chr[256];
+    while(strcmp(buffer1,"Exit")!=0){
+	recv(client, buffer1, 256, 0); 
+	printf("Server : %s\n", buffer1);
+	scanf("%c",&chr);
+	strcpy(buffer2, chr); 
+    	send(client, buffer2, 256, 0);
+	recv(client, buffer1, 256, 0); 
+	printf("Server : %s\n", buffer1);
+	scanf("%c",&chr);
+    }
 } 
