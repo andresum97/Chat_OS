@@ -19,7 +19,7 @@ using namespace std;
 using namespace chat;
 
 void sendInfo(char* user, string ip, int client){
-		char buffer2[256];
+		char buffer2[1024] ={0};
         MyInfoSynchronize * clientInfo(new MyInfoSynchronize);
         clientInfo->set_username(user);
         clientInfo->set_ip(ip);
@@ -33,8 +33,9 @@ void sendInfo(char* user, string ip, int client){
 		cout<< clientMessage.option()<<endl;
 		cout<< clientMessage.synchronize().username()<<endl;
 		cout<< clientMessage.synchronize().ip()<<endl;
-		strcpy(buffer2, msg); 
-        send(client, buffer2, 256, 0);
+
+		strcpy(buffer2, msg.c_str());
+        send(client, buffer2, msg.size()+1,0);
     }
 
 int main(int argc, char *argv[]){
@@ -63,7 +64,7 @@ int main(int argc, char *argv[]){
  
     int puerto = atoi(port);
 	printf("Puerto es %d\n",puerto);
-	sendInfo(username, ip, client);
+	//sendInfo(username, ip, client);
 
 
     if (client < 0) 
@@ -95,15 +96,16 @@ int main(int argc, char *argv[]){
         printf("Error in Connection\n"); 
     //====================================================================================================================
     char chr[257];
+	sendInfo(username, ip, client);
     while(strcmp(buffer1,"Exit")!=0){
-	recv(client, buffer1, 256, 0); 
-	printf("Server : %s\n", buffer1);
-	scanf("%s",&chr);
-	strcpy(buffer2, chr); 
-    	send(client, buffer2, 256, 0);
-	recv(client, buffer1, 256, 0); 
-	printf("Server : %s\n", buffer1);
-	scanf("%c",&chr);
+		recv(client, buffer1, 256, 0); 
+		printf("Server : %s\n", buffer1);
+		scanf("%s",&chr);
+		strcpy(buffer2, chr); 
+			send(client, buffer2, 256, 0);
+		recv(client, buffer1, 256, 0); 
+		printf("Server : %s\n", buffer1);
+		scanf("%c",&chr);
     }
 	google::protobuf::ShutdownProtobufLibrary();
     return 0; 
