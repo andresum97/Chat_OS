@@ -20,28 +20,43 @@ using namespace std;
 using namespace chat;
 
 void * serverThread(void *arg){
+
+	//MANDAMOS COSAS EN EL BUFFER1 RECIBIMOS EN EL 2
 	int acc = *((int *)arg);
-	char buffer1[1024], buffer2[1024], buffer3[1024];
+	char buffer1[1024], buffer2[1024];
+
+	//strcpy(buffer1, "\n1. Opcion 1 \n2. Opcion 2\n3. Exit\n"); 
+	//send(acc, buffer1, 256, 0);
+	//printf("Se envio el Menu\n");
+
+	recv(acc, buffer2, 256, 0);
+	ClientMessage client;
+	string msg;
+	client.ParseFromString(buffer2);
+	printf("RECIBIENDO EL PASO 1 DEL 3 WAY\n");	
+	cout << client.option() << endl;
+	cout << client.synchronize().username() << endl;
+	cout << client.synchronize().ip() << endl;
+	
+	printf("MANDANDO EL PASO 2 DEL 3 WAY\n");
+	MyInfoResponse infoResponse;
+	infoResponse.set_userid(50);
+	string infoRes;
+	infoResponse.SerializeToString(&infoRes);
+	strcpy(buffer1, infoRes.c_str());
+	send(acc,buffer1, 1024,0);
+
+	recv(acc, buffer2, 1024,0);
+	MyInfoAcknowledge infoAcknowlege;
+	infoAcknowlege.ParseFromString(buffer2);
+	printf("RECIBIENDO EL PASO 3 DEL 3 WAY\n");
+	cout << infoAcknowlege.userid() << endl;
+
 	strcpy(buffer1, "\n1. Opcion 1 \n2. Opcion 2\n3. Exit\n"); 
-        	send(acc, buffer1, 256, 0);
-		printf("Se envio el Menu\n");
-		recv(acc, buffer2, 256, 0);
-		ClientMessage client;
-		string msg;
-		client.ParseFromString(buffer2);
-				
-		cout << client.option() << endl;
-		cout << client.synchronize().username() << endl;
-		cout << client.synchronize().ip() << endl;
-		printf("Se recibio el clientMessage");
-		printf("Se va a mandar el infoResponse");
-		MyInfoResponse infoResponse;
-		infoResponse.set_userid(acc);
-		string infoRes;
-		infoResponse.SerializeToString(&infoRes);
-		strcpy(buffer3, infoRes.c_str());
-		send(acc,buffer3, infoRes.size()+1,0);
-		
+	send(acc, buffer1, 256, 0);
+	printf("Se envio el Menu\n");
+	
+	recv(acc, buffer2, 1024,0);
 	while(strcmp(buffer2,"3")!=0){
 		//printf("Client: %s\n",buffer2);
 		if(strcmp(buffer2,"1")==0){
@@ -59,9 +74,8 @@ void * serverThread(void *arg){
 			strcpy(buffer1, "Exit"); 
         		send(acc, buffer1, 256, 0); 
 		}else{
-			printf("Opcion no valida\n ");
 			printf("%s",buffer2);
-					printf("El acc es %d",acc);
+			printf("El acc es %d",acc);
 			strcpy(buffer1, "Opcion no valida"); 
         		send(acc, buffer1, 256, 0);
 		}
