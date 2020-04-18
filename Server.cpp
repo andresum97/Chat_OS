@@ -39,7 +39,7 @@ void * serverThread(void *arg){
 		infoResponse.set_userid(acc);
 		string infoRes;
 		infoResponse.SerializeToString(&infoRes);
-		strcpy(buffer2, infoRes.c_str());
+		strcpy(buffer3, infoRes.c_str());
 		send(acc,buffer3, infoRes.size()+1,0);
 		
 	while(strcmp(buffer2,"3")!=0){
@@ -61,6 +61,7 @@ void * serverThread(void *arg){
 		}else{
 			printf("Opcion no valida\n ");
 			printf("%s",buffer2);
+					printf("El acc es %d",acc);
 			strcpy(buffer1, "Opcion no valida"); 
         		send(acc, buffer1, 256, 0);
 		}

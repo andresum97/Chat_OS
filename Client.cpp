@@ -37,9 +37,13 @@ void sendInfo(char* user, string ip, int client){
 
 		strcpy(buffer2, msg.c_str());
         send(client, buffer2, msg.size()+1,0);
-	printf("Se envio la el clientMessage al usuario");
+	printf("Se envio la el clientMessage al usuario \n");
 	recv(client, buffer3, 1024,0);
-	printf("Se recibio el infoResponse: %s \n",buffer3);
+	MyInfoResponse infoResponse;
+	string infoRes;
+	infoResponse.ParseFromString(buffer3);
+	printf("Info response del Server \n");
+	cout << infoResponse.userid() << endl;
     }
 
 int main(int argc, char *argv[]){
