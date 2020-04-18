@@ -19,7 +19,7 @@ using namespace std;
 using namespace chat;
 
 void sendInfo(char* user, string ip, int client){
-
+		char buffer2[256];
         MyInfoSynchronize * clientInfo(new MyInfoSynchronize);
         clientInfo->set_username(user);
         clientInfo->set_ip(ip);
@@ -30,8 +30,11 @@ void sendInfo(char* user, string ip, int client){
 
         string msg;
         clientMessage.SerializeToString(&msg);
-	cout<< clientMessage.option()<<endl;
-        //send(client, msg, 256, 0);
+		cout<< clientMessage.option()<<endl;
+		cout<< clientMessage.synchronize().username()<<endl;
+		cout<< clientMessage.synchronize().ip()<<endl;
+		strcpy(buffer2, msg); 
+        send(client, buffer2, 256, 0);
     }
 
 int main(int argc, char *argv[]){
@@ -60,20 +63,9 @@ int main(int argc, char *argv[]){
  
     int puerto = atoi(port);
 	printf("Puerto es %d\n",puerto);
-	
-	
-    /*MyInfoSynchronize * clientInfo(new MyInfoSynchronize);
-    clientInfo->set_username(username);
-    clientInfo->set_ip(ip);
+	sendInfo(username, ip, client);
 
-    ClientMessage clientMessage;
-    clientMessage.set_option(1);
-    clientMessage.set_allocated_synchronize(clientInfo);
 
-    string msg;
-    clientMessage.SerializeToString(&msg);
-    send(client, msg, 256, 0);
-    */
     if (client < 0) 
     printf("Error in client creating\n"); 
     else
