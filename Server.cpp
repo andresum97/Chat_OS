@@ -2,22 +2,39 @@
 #include<sys/types.h> 
 #include<sys/socket.h> 
 #include<sys/un.h> 
-#include<string.h> 
+#include<string> 
 #include<netdb.h> 
 #include<netinet/in.h> 
-#include<arpa/inet.h> 
-#include<string.h> 
+#include<arpa/inet.h>
+#include <stdlib.h>
+#include <sstream>
+#include <iostream>
+#include <cstdlib>
+#include <pthread.h>
+#include <bits/stdc++.h>
+#include <arpa/inet.h>
+#include <chrono>
+#include "mensaje.pb.h"
 #include<pthread.h>
+using namespace std;
+using namespace chat;
 
 void * serverThread(void *arg){
 	int acc = *((int *)arg);
-	char buffer1[256], buffer2[256];
+	char buffer1[1024], buffer2[1024];
 	while(strcmp(buffer2,"3")!=0){
 		strcpy(buffer1, "\n1. Opcion 1 \n2. Opcion 2\n3. Exit\n"); 
         	send(acc, buffer1, 256, 0);
 		printf("Se envio el Menu\n");
 		recv(acc, buffer2, 256, 0);
-		printf("Client: %s\n",buffer2);
+		ClientMessage client;
+		string msg;
+		client.ParseFromString(buffer2);
+				
+		cout << client.option() << endl;
+		cout << client.synchronize().username() << endl;
+		cout << client.synchronize().ip() << endl;
+		//printf("Client: %s\n",buffer2);
 		if(strcmp(buffer2,"1")==0){
 			printf("Eligio 1\n ");
 			strcpy(buffer1, "Elegiste 1"); 
@@ -45,7 +62,7 @@ void * serverThread(void *arg){
 
 int main() 
 { 
-
+    GOOGLE_PROTOBUF_VERIFY_VERSION;
     char buffer1[256], buffer2[256]; 
     int server = socket(AF_INET, SOCK_STREAM, 0); 
     if (server < 0) 
@@ -94,5 +111,6 @@ int main()
 	
         
     }  
+	google::protobuf::ShutdownProtobufLibrary();
     return 0; 
 } 
