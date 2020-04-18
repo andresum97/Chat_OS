@@ -19,7 +19,8 @@ using namespace std;
 using namespace chat;
 
 void sendInfo(char* user, string ip, int client){
-		char buffer2[1024] ={0};
+	char buffer2[1024] ={0};
+	char buffer3[1024] ={0};
         MyInfoSynchronize * clientInfo(new MyInfoSynchronize);
         clientInfo->set_username(user);
         clientInfo->set_ip(ip);
@@ -36,6 +37,9 @@ void sendInfo(char* user, string ip, int client){
 
 		strcpy(buffer2, msg.c_str());
         send(client, buffer2, msg.size()+1,0);
+	printf("Se envio la el clientMessage al usuario");
+	recv(client, buffer3, 1024,0);
+	printf("Se recibio el infoResponse: %s \n",buffer3);
     }
 
 int main(int argc, char *argv[]){

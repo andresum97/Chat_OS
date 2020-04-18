@@ -21,9 +21,8 @@ using namespace chat;
 
 void * serverThread(void *arg){
 	int acc = *((int *)arg);
-	char buffer1[1024], buffer2[1024];
-	while(strcmp(buffer2,"3")!=0){
-		strcpy(buffer1, "\n1. Opcion 1 \n2. Opcion 2\n3. Exit\n"); 
+	char buffer1[1024], buffer2[1024], buffer3[1024];
+	strcpy(buffer1, "\n1. Opcion 1 \n2. Opcion 2\n3. Exit\n"); 
         	send(acc, buffer1, 256, 0);
 		printf("Se envio el Menu\n");
 		recv(acc, buffer2, 256, 0);
@@ -34,6 +33,16 @@ void * serverThread(void *arg){
 		cout << client.option() << endl;
 		cout << client.synchronize().username() << endl;
 		cout << client.synchronize().ip() << endl;
+		printf("Se recibio el clientMessage");
+		printf("Se va a mandar el infoResponse");
+		MyInfoResponse infoResponse;
+		infoResponse.set_userid(acc);
+		string infoRes;
+		infoResponse.SerializeToString(&infoRes);
+		strcpy(buffer2, infoRes.c_str());
+		send(acc,buffer3, infoRes.size()+1,0);
+		
+	while(strcmp(buffer2,"3")!=0){
 		//printf("Client: %s\n",buffer2);
 		if(strcmp(buffer2,"1")==0){
 			printf("Eligio 1\n ");
