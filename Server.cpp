@@ -52,13 +52,14 @@ void * serverThread(void *arg){
 	printf("RECIBIENDO EL PASO 3 DEL 3 WAY\n");
 	cout << infoAcknowlege.userid() << endl;
 
-	strcpy(buffer1, "\n1. Opcion 1 \n2. Opcion 2\n3. Exit\n"); 
-	send(acc, buffer1, 256, 0);
-	printf("Se envio el Menu\n");
 	
-	recv(acc, buffer2, 1024,0);
 	while(strcmp(buffer2,"3")!=0){
-		//printf("Client: %s\n",buffer2);
+		strcpy(buffer1, "\n1. Opcion 1 \n2. Opcion 2\n3. Exit\n"); 
+		send(acc, buffer1, 256, 0);
+		printf("Se envio el Menu\n");
+		
+		recv(acc, buffer2, 1024,0);
+		printf("Client: %s\n",buffer2);
 		if(strcmp(buffer2,"1")==0){
 			printf("Eligio 1\n ");
 			strcpy(buffer1, "Elegiste 1"); 
