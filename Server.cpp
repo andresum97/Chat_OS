@@ -45,6 +45,7 @@ void changeStatus(void *arg,struct User thisUser){
 	cout << responseStatus.changestatus().status() << endl;
 	thisUser.status = responseStatus.changestatus().status();
 	cout << "El nuevo estatus " << thisUser.status << endl;
+	printf("\n");
 	
 		
 }
@@ -111,7 +112,7 @@ void * serverThread(void *arg){
 	thisUser.userid =  serverMessage.myinforesponse().userid();
 	strcpy(thisUser.ip_addr,client.synchronize().ip().c_str());
 	thisUser.status = "1"; //Activo
-	printf("El username es %s",thisUser.username);
+	
 	
 	//recv(acc, buffer2, 1024,0);
 	//MyInfoAcknowledge infoAcknowlege;
@@ -121,7 +122,7 @@ void * serverThread(void *arg){
 
 	
 	while(strcmp(buffer2,"3")!=0){
-		strcpy(buffer1, "\n1. Cambiar Status \n2. Opcion 2\n3. Exit\n"); 
+		strcpy(buffer1, "\n1. Cambiar Status \n2. Chatear con Todos \n3. Mensaje Directo\n4. Lista de Usuarios Conectados\n5. Informacion de Usuario\n6. Ayuda\n7. Exit\n"); 
 		send(acc, buffer1, 256, 0);
 		printf("Se envio el Menu\n");
 		
@@ -140,6 +141,26 @@ void * serverThread(void *arg){
 		} else 
 		if(strcmp(buffer2,"3")==0){
 			printf("Eligio 3\n ");
+			strcpy(buffer1, "Elegiste 3"); 
+        		send(acc, buffer1, 256, 0); 
+		}else 
+		if(strcmp(buffer2,"4")==0){
+			printf("Eligio 4\n ");
+			strcpy(buffer1, "Elegiste 4"); 
+        		send(acc, buffer1, 256, 0); 
+		}else 
+		if(strcmp(buffer2,"5")==0){
+			printf("Eligio 5\n ");
+			strcpy(buffer1, "Elegiste 5"); 
+        		send(acc, buffer1, 256, 0); 
+		}else 
+		if(strcmp(buffer2,"6")==0){
+			printf("Eligio 6\n ");
+			strcpy(buffer1, "Elegiste 6"); 
+        		send(acc, buffer1, 256, 0); 
+		}else 
+		if(strcmp(buffer2,"7")==0){
+			printf("Eligio 7\n ");
 			strcpy(buffer1, "Exit"); 
         		send(acc, buffer1, 256, 0); 
 		}else{

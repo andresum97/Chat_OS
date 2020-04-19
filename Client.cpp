@@ -178,7 +178,7 @@ int main(int argc, char *argv[]){
 	sendInfo(username, ip, client);
 
     while(strcmp(buffer1,"Exit")!=0){
-		printf("ENTRA ACA?\n");
+		
 		recv(client, buffer1, 256, 0); 
 		printf("Server : %s\n", buffer1);
 		scanf("%s",&chr);
