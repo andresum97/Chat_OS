@@ -32,7 +32,7 @@ int contUser = 0;
 
 void connectedUsers(void *arg,struct User thisUser){
 	
-	cout << "hola" << endl;
+	
 	int acc = *((int *)arg);
 	char buffer1[1024], buffer2[1024];
 
@@ -42,7 +42,7 @@ void connectedUsers(void *arg,struct User thisUser){
 	*/
 	
 	recv(acc, buffer2, 1024,0);
-	cout << buffer2 << "holaaaaaaaaaaaaaaaaa" << endl;
+	
 	ClientMessage connectedUsers;
 	connectedUsers.ParseFromString(buffer2);
 	printf("EL USUARIO QUE PIDIO LA LISTA ES\n");
@@ -202,7 +202,7 @@ void * serverThread(void *arg){
 		}else 
 		if(strcmp(buffer2,"4")==0){
 			printf("Eligio 4\n ");
-			strcpy(buffer1, "Elegiste 4"); 
+			strcpy(buffer1, "4"); 
         		send(acc, buffer1, 256, 0); 
 				connectedUsers(&acc,thisUser);
 		}else 

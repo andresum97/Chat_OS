@@ -20,6 +20,7 @@ using namespace chat;
 
 
 void connectedUsers(int client, char* username){
+	
 	char buffer1[1024], buffer2[1024];
 	char enter[10];
 	//recv(client, buffer1, 1024,0);
@@ -37,7 +38,8 @@ void connectedUsers(int client, char* username){
 	clientMessage.SerializeToString(&connectUser);
 	strcpy(buffer2, connectUser.c_str());
 	send(client,buffer2, 1024,0);
-	printf("ConnectUsers enviado");
+	
+	printf("ConnectUsers enviado\n");
 
 	
 }
@@ -72,7 +74,7 @@ void changeStatus(int client){
 
 	strcpy(buffer2, newStatus.c_str());
 	send(client,buffer2, 1024,0);
-	printf("Status enviado");
+	printf("Status enviado\n");
 	//printf("Se esta cambiando de status a %s",status);
 
 	recv(client, buffer1, 1024,0);
