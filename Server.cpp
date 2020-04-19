@@ -200,7 +200,7 @@ void * serverThread(void *arg){
 int main() 
 { 
     GOOGLE_PROTOBUF_VERIFY_VERSION;
-    char buffer1[256], buffer2[256]; 
+    char buffer1[256], buffer2[256], bufferU[256]; 
     int server = socket(AF_INET, SOCK_STREAM, 0); 
     if (server < 0) 
         printf("Error in server creating\n"); 
@@ -243,14 +243,14 @@ int main()
       	
         printf("connection established with IP : %s and PORT : %d\n",  
                                             ip, ntohs(peer_addr.sin_port)); 
-		recv(server, buffer1, 256,0); //SE RECIBE USUARIO
-		users[contUser].username = buffer1;
+		recv(acc, bufferU, 256,0); //SE RECIBE USUARIO
+		users[contUser].username = bufferU;
+		cout << "el bufferU" << bufferU << endl;
 		strcpy(users[contUser].ip_addr,ip);
 		users[contUser].userid = acc;
 		users[contUser].status = "1";
 		contUser++;
-		memset(buffer1,0,sizeof buffer1);
-		memset(buffer2,0,sizeof buffer2);	
+		strcpy(buffer2, "0");
 		if (pthread_create(&tid[i], NULL, serverThread, &acc) != 0)
 			printf("Fallo\n");
 	
