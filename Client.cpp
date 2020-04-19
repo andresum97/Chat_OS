@@ -18,6 +18,24 @@
 using namespace std;
 using namespace chat;
 
+
+void connectedUsers(int client, char* username){
+	char buffer[1024], buffer2[1024];
+	connectedUserRequest * connectedUsers(new connectedUserRequest);
+	connectedUsers->set_username(username);
+	ClientMessage clientMessage;
+    	clientMessage.set_option(2);
+    	clientMessage.set_allocated_connectedusers(connectedUsers);
+	string connectUser;
+	//SE LO MANDAMOS AL SERVER	
+	clientMessage.SerializeToString(&connectUser);
+	strcpy(buffer2, connectUser.c_str());
+	send(client,buffer2, 1024,0);
+	printf("ConnectUsers enviado");
+
+	
+}
+
 void changeStatus(int client){
 	
 	char buffer1[1024], buffer2[1024];	
@@ -207,7 +225,10 @@ int main(int argc, char *argv[]){
 		//printf("Server : %s\n", buffer1);
 		if(strcmp(buffer1,"1")==0){
 			changeStatus(client);		
-		}		
+		}else
+		if(strcmp(buffer1,"4")==0){
+			connectedUsers(client,username);		
+		}
 		scanf("%c",&chr);
     }
 	google::protobuf::ShutdownProtobufLibrary();
