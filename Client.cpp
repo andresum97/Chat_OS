@@ -21,13 +21,14 @@ using namespace chat;
 void changeStatus(int client){
 	
 	char buffer1[1024], buffer2[1024];	
-	string status;
+	char status[10];
 	//MANDANDO EL MENU DE STATUS
 	recv(client, buffer1, 1024,0);
 	printf("Server : %s\n", buffer1);
 	//PREGUNTA QUE OPCION
 	scanf("%s",status);
-
+	printf("El status seleccionado es : %s \n",status);
+	cout << "El status seleccionado es " << status << endl;
 	ChangeStatusRequest * statusChange(new ChangeStatusRequest);
 	//ChangeStatusRequest statusChange;
 	statusChange->set_status(status);
