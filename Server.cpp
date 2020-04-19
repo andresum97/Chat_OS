@@ -19,6 +19,13 @@
 using namespace std;
 using namespace chat;
 
+struct User{
+	int userid;
+	string username;
+	char ip_addr[INET_ADDRSTRLEN];
+	string status;
+};
+
 
 void changeStatus(void *arg){
 	int acc = *((int *)arg);
@@ -36,6 +43,7 @@ void changeStatus(void *arg){
 
 	printf("EL STATUS QUE MANDO ES\n");
 	cout << responseStatus.changestatus().status() << endl;
+	
 		
 }
 
@@ -95,6 +103,13 @@ void * serverThread(void *arg){
 	cout << client2.option() << endl;
 	cout << client2.acknowledge().userid() << endl;
 	printf("-----------------------------------------------\n");
+	printf("REALIZANDO STRUCT DE CLIENTE\n");
+	struct User thisUser;
+	thisUser.username =  client.synchronize().username();
+	thisUser.userid =  serverMessage.myinforesponse().userid();
+	strcpy(thisUser.ip_addr,client.synchronize().ip().c_str());
+	thisUser.status = "1"; //Activo
+	
 	//recv(acc, buffer2, 1024,0);
 	//MyInfoAcknowledge infoAcknowlege;
 	//infoAcknowlege.ParseFromString(buffer2);
