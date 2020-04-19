@@ -78,6 +78,7 @@ void * serverThread(void *arg){
 	int acc = *((int *)arg);
 	int id = acc;
 	char buffer1[1024], buffer2[1024];
+	struct User thisUser;
 
 	//strcpy(buffer1, "\n1. Opcion 1 \n2. Opcion 2\n3. Exit\n"); 
 	//send(acc, buffer1, 256, 0);
@@ -128,13 +129,20 @@ void * serverThread(void *arg){
 	cout << client2.option() << endl;
 	cout << client2.acknowledge().userid() << endl;
 	printf("-----------------------------------------------\n");
-	printf("REALIZANDO STRUCT DE CLIENTE\n");
-	struct User thisUser;
-	thisUser.username =  client.synchronize().username();
-	thisUser.userid =  serverMessage.myinforesponse().userid();
-	strcpy(thisUser.ip_addr,client.synchronize().ip().c_str());
-	thisUser.status = "1"; //Activo
-	
+	if(client2.acknowledge().userid() != acc){
+		strcpy(users[contUser].ip_addr,"");
+		users[contUser].userid = 0;
+		users[contUser].username = "";
+		users[contUser].status = "";
+		cout << "NO SE REALIZO EL THREE-WAY HANDSHAKE" << endl;
+		strcpy(buffer2,"7");
+	}else{
+		printf("REALIZANDO STRUCT DE CLIENTE\n");
+		thisUser.username =  client.synchronize().username();
+		thisUser.userid =  serverMessage.myinforesponse().userid();
+		strcpy(thisUser.ip_addr,client.synchronize().ip().c_str());
+		thisUser.status = "1"; //Activo
+	}
 	
 	//recv(acc, buffer2, 1024,0);
 	//MyInfoAcknowledge infoAcknowlege;
