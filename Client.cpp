@@ -41,6 +41,21 @@ void connectedUsers(int client, char* username){
 	
 	printf("ConnectUsers enviado\n");
 
+	recv(client, buffer1, 1024,0);
+	ServerMessage serverMessage;
+	string userCon;
+	serverMessage.ParseFromString(buffer1);	
+
+	//MyInfoResponse infoResponse;
+	//string infoRes;
+	//infoResponse.ParseFromString(buffer1);
+	printf("RECIBIENDO LISTA DE USUARIOS\n");
+	printf("-----------------------------------------------\n");
+	cout<< "La opcion del change es " <<serverMessage.option()<<endl;
+	cout<< "El Id del user " << serverMessage.connecteduserresponse().username()<<endl;
+	printf("-----------------------------------------------\n");
+
+
 	
 }
 

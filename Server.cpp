@@ -30,7 +30,7 @@ struct User{
 struct User users[10];
 int contUser = 0;
 
-void connectedUsers(void *arg,struct User thisUser){
+void connectedUsers(void *arg,struct User users){
 	
 	
 	int acc = *((int *)arg);
@@ -48,10 +48,24 @@ void connectedUsers(void *arg,struct User thisUser){
 	printf("EL USUARIO QUE PIDIO LA LISTA ES\n");
 	cout << connectedUsers.connectedusers().username() << endl;
 
-	//printf("MANDANDO EL RESPONSE\n");
-	//ConnectedUserResponse * connectedResponse (new ConnectedUserResponse);
-	//connectedResponse-> set_userid(acc);
-	//responseStatus2-> set_status(thisUser.status);
+	printf("MANDANDO EL RESPONSE\n");
+	ConnectedUser* usuariosOnline(new ConnectedUser);
+	ConnectedUserResponse * connectedResponse (new ConnectedUserResponse);
+	for(int i = 0; i<sizeof users;i++){
+		usuariosOnline = connectedResponse->add_connectedusers();
+		usuariosOnline -> set_username(users[i].username);
+		usuariosOnline -> set_status(users[i].status);
+		usuariosOnline -> set_userid(users[i].userid);
+		usuariosOnline -> set_ip(users[contUser].ip_addr);
+	}
+	ServerMessage serverMessage;
+	serverMessage.set_option(5);
+	serverMessage.set_allocated_connecteduserresponse(usuariosOnline);
+
+	string userCon;
+	serverMessage.SerializeToString(&userCon);
+	strcpy(buffer1, userCon.c_str());
+	send(acc,buffer1, 1024,0);
 	
 }
 
@@ -204,7 +218,7 @@ void * serverThread(void *arg){
 			printf("Eligio 4\n ");
 			strcpy(buffer1, "4"); 
         		send(acc, buffer1, 256, 0); 
-				connectedUsers(&acc,thisUser);
+				connectedUsers(&acc,*users);
 		}else 
 		if(strcmp(buffer2,"5")==0){
 			printf("Eligio 5\n ");
