@@ -15,7 +15,8 @@
 #include <arpa/inet.h>
 #include <chrono>
 #include "mensaje.pb.h"
-#include<pthread.h>
+#include <pthread.h>
+#include <unistd.h>
 using namespace std;
 using namespace chat;
 
@@ -28,6 +29,31 @@ struct User{
 
 struct User users[10];
 int contUser = 0;
+
+void connectedUsers(void *arg,struct User thisUser){
+	
+	cout << "hola" << endl;
+	int acc = *((int *)arg);
+	char buffer1[1024], buffer2[1024];
+
+	/*strcpy(buffer1, "Presione enter para recibir lista\n"); 
+	send(acc, buffer1, 256, 0);
+	printf("Se envio las opciones\n");
+	*/
+	
+	recv(acc, buffer2, 1024,0);
+	cout << buffer2 << "holaaaaaaaaaaaaaaaaa" << endl;
+	ClientMessage connectedUsers;
+	connectedUsers.ParseFromString(buffer2);
+	printf("EL USUARIO QUE PIDIO LA LISTA ES\n");
+	cout << connectedUsers.connectedusers().username() << endl;
+
+	//printf("MANDANDO EL RESPONSE\n");
+	//ConnectedUserResponse * connectedResponse (new ConnectedUserResponse);
+	//connectedResponse-> set_userid(acc);
+	//responseStatus2-> set_status(thisUser.status);
+	
+}
 
 void changeStatus(void *arg,struct User thisUser){
 	int acc = *((int *)arg);
@@ -178,6 +204,7 @@ void * serverThread(void *arg){
 			printf("Eligio 4\n ");
 			strcpy(buffer1, "Elegiste 4"); 
         		send(acc, buffer1, 256, 0); 
+				connectedUsers(&acc,thisUser);
 		}else 
 		if(strcmp(buffer2,"5")==0){
 			printf("Eligio 5\n ");

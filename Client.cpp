@@ -20,7 +20,13 @@ using namespace chat;
 
 
 void connectedUsers(int client, char* username){
-	char buffer[1024], buffer2[1024];
+	char buffer1[1024], buffer2[1024];
+	char enter[10];
+	//recv(client, buffer1, 1024,0);
+	//printf("Server : %s\n", enter);
+	//PREGUNTA QUE OPCION
+	//scanf("%s",enter);
+
 	connectedUserRequest * connectedUsers(new connectedUserRequest);
 	connectedUsers->set_username(username);
 	ClientMessage clientMessage;
