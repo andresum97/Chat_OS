@@ -68,11 +68,13 @@ void sendInfo(char* user, string ip, int client){
 
     string msg;
     clientMessage.SerializeToString(&msg);
-	//cout<< clientMessage.option()<<endl;
-	//cout<< clientMessage.synchronize().username()<<endl;
-	//cout<< clientMessage.synchronize().ip()<<endl;
-
 	printf("MANDANDO PASO 1 DEL 3 WAY \n");
+	printf("-----------------------------------------------\n");
+	cout<< clientMessage.option()<<endl;
+	cout<< clientMessage.synchronize().username()<<endl;
+	cout<< clientMessage.synchronize().ip()<<endl;
+	printf("-----------------------------------------------\n");
+
 	strcpy(buffer2, msg.c_str());
     send(client, buffer2, msg.size()+1,0);
 	
@@ -81,19 +83,37 @@ void sendInfo(char* user, string ip, int client){
 	//printf("EL SERVER NOS MANDO %s\n",buffer1);
 
 	recv(client, buffer1, 1024,0);
-	MyInfoResponse infoResponse;
+	ServerMessage serverMessage;
 	string infoRes;
-	infoResponse.ParseFromString(buffer1);
+	serverMessage.ParseFromString(buffer1);	
+
+	//MyInfoResponse infoResponse;
+	//string infoRes;
+	//infoResponse.ParseFromString(buffer1);
 	printf("RECIBIENDO EL PASO 2 DEL 3 WAY\n");
-	cout << infoResponse.userid() << endl;
+	printf("-----------------------------------------------\n");
+	cout << serverMessage.option() << endl;
+	cout << serverMessage.myinforesponse().userid() << endl;
+	printf("-----------------------------------------------\n");
 
 	printf("MANDANDO EL PASO 3 DEL 3 WAY\n");
-	MyInfoAcknowledge infoAcknowlege;
-	infoAcknowlege.set_userid(infoResponse.userid());
-	string infoAck;
-	infoAcknowlege.SerializeToString(&infoAck);
-	strcpy(buffer2, infoAck.c_str());
-	send(client,buffer2, 1024,0);
+	
+	MyInfoAcknowledge * infoAck(new MyInfoAcknowledge);
+	infoAck->set_userid(serverMessage.myinforesponse().userid());
+
+	ClientMessage clientMessage2;
+    clientMessage2.set_option(6);
+    clientMessage2.set_allocated_acknowledge(infoAck);
+
+	string msg2;
+    clientMessage2.SerializeToString(&msg2);
+	printf("MANDANDO PASO 1 DEL 3 WAY \n");
+	printf("-----------------------------------------------\n");
+	cout<< clientMessage2.option()<<endl;
+	cout<< clientMessage2.acknowledge().userid()<<endl;
+	printf("-----------------------------------------------\n");
+	strcpy(buffer2, msg2.c_str());
+    send(client, buffer2, msg2.size()+1,0);
 	
 }
 

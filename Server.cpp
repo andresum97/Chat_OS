@@ -55,23 +55,51 @@ void * serverThread(void *arg){
 	string msg;
 	client.ParseFromString(buffer2);
 	printf("RECIBIENDO EL PASO 1 DEL 3 WAY\n");	
-	cout << client.option() << endl;
-	cout << client.synchronize().username() << endl;
-	cout << client.synchronize().ip() << endl;
+	printf("-----------------------------------------------\n");
+	cout<< client.option()<<endl;
+	cout<< client.synchronize().username()<<endl;
+	cout<< client.synchronize().ip()<<endl;
+	printf("-----------------------------------------------\n");
 	
 	printf("MANDANDO EL PASO 2 DEL 3 WAY\n");
-	MyInfoResponse infoResponse;
-	infoResponse.set_userid(acc);
+	MyInfoResponse * responseInfo(new MyInfoResponse);
+	responseInfo-> set_userid(acc);
+	
+	ServerMessage serverMessage;
+	serverMessage.set_option(4);
+	serverMessage.set_allocated_myinforesponse(responseInfo);
+	
 	string infoRes;
-	infoResponse.SerializeToString(&infoRes);
+	serverMessage.SerializeToString(&infoRes);
 	strcpy(buffer1, infoRes.c_str());
 	send(acc,buffer1, 1024,0);
 
-	recv(acc, buffer2, 1024,0);
-	MyInfoAcknowledge infoAcknowlege;
-	infoAcknowlege.ParseFromString(buffer2);
-	printf("RECIBIENDO EL PASO 3 DEL 3 WAY\n");
-	cout << infoAcknowlege.userid() << endl;
+	printf("-----------------------------------------------\n");
+	cout<< serverMessage.option()<<endl;
+	cout<< serverMessage.myinforesponse().userid()<<endl;
+	printf("-----------------------------------------------\n");
+
+
+	//MyInfoResponse infoResponse;
+	//infoResponse.set_userid(acc);
+	//string infoRes;
+	//infoResponse.SerializeToString(&infoRes);
+	//strcpy(buffer1, infoRes.c_str());
+	//send(acc,buffer1, 1024,0);
+	recv(acc, buffer2, 256, 0);
+	ClientMessage client2;
+	string msg2;
+	client2.ParseFromString(buffer2);
+	printf("RECIBIENDO EL PASO 3 DEL 3 WAY\n");	
+	printf("-----------------------------------------------\n");
+	cout << client2.option() << endl;
+	cout << client2.acknowledge().userid() << endl;
+	printf("-----------------------------------------------\n");
+	//recv(acc, buffer2, 1024,0);
+	//MyInfoAcknowledge infoAcknowlege;
+	//infoAcknowlege.ParseFromString(buffer2);
+	//printf("RECIBIENDO EL PASO 3 DEL 3 WAY\n");
+	//cout << infoAcknowlege.userid() << endl;
 
 	
 	while(strcmp(buffer2,"3")!=0){
