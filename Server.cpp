@@ -18,16 +18,16 @@
 #include<pthread.h>
 using namespace std;
 using namespace chat;
-/*
+
 struct User{
 	int userid;
 	string username;
 	char ip_addr[INET_ADDRSTRLEN];
 	string status;
 };
-*/
 
-void changeStatus(void *arg){//,struct User thisUser){
+
+void changeStatus(void *arg,struct User thisUser){
 	int acc = *((int *)arg);
 	char buffer1[1024], buffer2[1024];
 
@@ -37,15 +37,14 @@ void changeStatus(void *arg){//,struct User thisUser){
 
 	recv(acc, buffer2, 1024,0);
 	ClientMessage responseStatus;
-	//responseStatus.set_userid(acc);
-	//responseStatus.set_status(buffer2);
 	responseStatus.ParseFromString(buffer2);
 
 	printf("EL STATUS QUE MANDO ES\n");
 	cout << responseStatus.changestatus().status() << endl;
-	//thisUser.status = responseStatus.changestatus().status();
-	//cout << "El nuevo estatus " << thisUser.status << endl;
+	thisUser.status = responseStatus.changestatus().status();
+	cout << "El nuevo estatus " << thisUser.status << endl;
 	printf("\n");
+
 	
 		
 }
@@ -107,12 +106,12 @@ void * serverThread(void *arg){
 	cout << client2.acknowledge().userid() << endl;
 	printf("-----------------------------------------------\n");
 	printf("REALIZANDO STRUCT DE CLIENTE\n");
-	/*struct User thisUser;
+	struct User thisUser;
 	thisUser.username =  client.synchronize().username();
 	thisUser.userid =  serverMessage.myinforesponse().userid();
 	strcpy(thisUser.ip_addr,client.synchronize().ip().c_str());
 	thisUser.status = "1"; //Activo
-	*/
+	
 	
 	//recv(acc, buffer2, 1024,0);
 	//MyInfoAcknowledge infoAcknowlege;
@@ -132,7 +131,7 @@ void * serverThread(void *arg){
 			printf("Eligio 1\n ");
 			strcpy(buffer1, "1"); 
         	send(acc, buffer1, 256, 0);
-			changeStatus(&acc);//,thisUser);
+			changeStatus(&acc,thisUser);
 		} else 
 		if(strcmp(buffer2,"2")==0){
 			printf("Eligio 2\n ");
@@ -219,7 +218,7 @@ int main()
         printf("Connection Established\n"); 
         char ip[INET_ADDRSTRLEN]; 
         inet_ntop(AF_INET, &(peer_addr.sin_addr), ip, INET_ADDRSTRLEN); 
-      
+      	
         printf("connection established with IP : %s and PORT : %d\n",  
                                             ip, ntohs(peer_addr.sin_port)); 
 		if (pthread_create(&tid[i], NULL, serverThread, &acc) != 0)
