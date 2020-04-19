@@ -191,6 +191,10 @@ int main(int argc, char *argv[]){
         printf("Error in Connection\n"); 
     //====================================================================================================================
     char chr[257];
+	strcpy(buffer2,username);
+	send(client, buffer2, 256, 0);
+	memset(buffer1,0,sizeof buffer1);
+	memset(buffer2,0,sizeof buffer2);
 	sendInfo(username, ip, client);
 
     while(strcmp(buffer1,"Exit")!=0){

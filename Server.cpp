@@ -26,6 +26,8 @@ struct User{
 	string status;
 };
 
+struct User users[10];
+int contUser = 0;
 
 void changeStatus(void *arg,struct User thisUser){
 	int acc = *((int *)arg);
@@ -185,7 +187,6 @@ void * serverThread(void *arg){
         		send(acc, buffer1, 256, 0); 
 		}else{
 			printf("%s",buffer2);
-			printf("El acc es %d",acc);
 			strcpy(buffer1, "Opcion no valida"); 
         		send(acc, buffer1, 256, 0);
 		}
@@ -242,6 +243,14 @@ int main()
       	
         printf("connection established with IP : %s and PORT : %d\n",  
                                             ip, ntohs(peer_addr.sin_port)); 
+		recv(server, buffer1, 256,0); //SE RECIBE USUARIO
+		users[contUser].username = buffer1;
+		strcpy(users[contUser].ip_addr,ip);
+		users[contUser].userid = acc;
+		users[contUser].status = "1";
+		contUser++;
+		memset(buffer1,0,sizeof buffer1);
+		memset(buffer2,0,sizeof buffer2);	
 		if (pthread_create(&tid[i], NULL, serverThread, &acc) != 0)
 			printf("Fallo\n");
 	
