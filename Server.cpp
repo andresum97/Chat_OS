@@ -18,16 +18,16 @@
 #include<pthread.h>
 using namespace std;
 using namespace chat;
-
+/*
 struct User{
 	int userid;
 	string username;
 	char ip_addr[INET_ADDRSTRLEN];
 	string status;
 };
+*/
 
-
-void changeStatus(void *arg,struct User thisUser){
+void changeStatus(void *arg){//,struct User thisUser){
 	int acc = *((int *)arg);
 	char buffer1[1024], buffer2[1024];
 
@@ -43,8 +43,8 @@ void changeStatus(void *arg,struct User thisUser){
 
 	printf("EL STATUS QUE MANDO ES\n");
 	cout << responseStatus.changestatus().status() << endl;
-	thisUser.status = responseStatus.changestatus().status();
-	cout << "El nuevo estatus " << thisUser.status << endl;
+	//thisUser.status = responseStatus.changestatus().status();
+	//cout << "El nuevo estatus " << thisUser.status << endl;
 	printf("\n");
 	
 		
@@ -107,12 +107,12 @@ void * serverThread(void *arg){
 	cout << client2.acknowledge().userid() << endl;
 	printf("-----------------------------------------------\n");
 	printf("REALIZANDO STRUCT DE CLIENTE\n");
-	struct User thisUser;
+	/*struct User thisUser;
 	thisUser.username =  client.synchronize().username();
 	thisUser.userid =  serverMessage.myinforesponse().userid();
 	strcpy(thisUser.ip_addr,client.synchronize().ip().c_str());
 	thisUser.status = "1"; //Activo
-	
+	*/
 	
 	//recv(acc, buffer2, 1024,0);
 	//MyInfoAcknowledge infoAcknowlege;
@@ -121,7 +121,7 @@ void * serverThread(void *arg){
 	//cout << infoAcknowlege.userid() << endl;
 
 	
-	while(strcmp(buffer2,"3")!=0){
+	while(strcmp(buffer2,"7")!=0){
 		strcpy(buffer1, "\n1. Cambiar Status \n2. Chatear con Todos \n3. Mensaje Directo\n4. Lista de Usuarios Conectados\n5. Informacion de Usuario\n6. Ayuda\n7. Exit\n"); 
 		send(acc, buffer1, 256, 0);
 		printf("Se envio el Menu\n");
@@ -132,7 +132,7 @@ void * serverThread(void *arg){
 			printf("Eligio 1\n ");
 			strcpy(buffer1, "1"); 
         	send(acc, buffer1, 256, 0);
-			changeStatus(&acc,thisUser);
+			changeStatus(&acc);//,thisUser);
 		} else 
 		if(strcmp(buffer2,"2")==0){
 			printf("Eligio 2\n ");
@@ -172,6 +172,7 @@ void * serverThread(void *arg){
 	}
 	//close(acc);
 	pthread_exit(NULL);
+	
 }
 
 
@@ -210,10 +211,10 @@ int main()
     char *ip; 
     pthread_t tid[2];
     int i = 0;
-
-    while (1) 
+	bool activo = true;
+    while (activo) 
     { 
-	strcpy(buffer2, "0");
+		strcpy(buffer2, "0");
         int acc = accept(server, (struct sockaddr*) &peer_addr, &addr_size); 
         printf("Connection Established\n"); 
         char ip[INET_ADDRSTRLEN]; 
@@ -221,8 +222,8 @@ int main()
       
         printf("connection established with IP : %s and PORT : %d\n",  
                                             ip, ntohs(peer_addr.sin_port)); 
-	if (pthread_create(&tid[i], NULL, serverThread, &acc) != 0)
-		printf("Fallo\n");
+		if (pthread_create(&tid[i], NULL, serverThread, &acc) != 0)
+			printf("Fallo\n");
 	
         
     }  
