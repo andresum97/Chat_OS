@@ -21,23 +21,30 @@ using namespace chat;
 void changeStatus(int client){
 	
 	char buffer1[1024], buffer2[1024];	
-	//string status;
+	string status;
 	//MANDANDO EL MENU DE STATUS
 	recv(client, buffer1, 1024,0);
 	printf("Server : %s\n", buffer1);
 	//PREGUNTA QUE OPCION
-	//scanf("%s",status);
+	scanf("%s",status);
+
 	ChangeStatusRequest * statusChange(new ChangeStatusRequest);
 	//ChangeStatusRequest statusChange;
-	statusChange->set_status("69");
+	statusChange->set_status(status);
+
 	ClientMessage clientMessage;
-    clientMessage.set_option(5);
-	clientMessage.set_userid(12);
+    clientMessage.set_option(3);
     clientMessage.set_allocated_changestatus(statusChange);	
 
 	string newStatus;
 	//SE LO MANDAMOS AL SERVER	
 	clientMessage.SerializeToString(&newStatus);
+	//printf("alo\n");
+	//cout<< clientMessage<<endl
+	//cout<< clientMessage.option()<<endl;
+	//cout<< clientMessage.changestatus().status()<<endl;
+
+
 	strcpy(buffer2, newStatus.c_str());
 	send(client,buffer2, 1024,0);
 	printf("Status enviado");

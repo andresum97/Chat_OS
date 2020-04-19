@@ -29,13 +29,13 @@ void changeStatus(void *arg){
 	printf("Se envio las opciones\n");
 
 	recv(acc, buffer2, 1024,0);
-	ChangeStatusResponse responseStatus;
+	ClientMessage responseStatus;
 	//responseStatus.set_userid(acc);
 	//responseStatus.set_status(buffer2);
 	responseStatus.ParseFromString(buffer2);
 
 	printf("EL STATUS QUE MANDO ES\n");
-	cout << responseStatus.status() << endl;
+	cout << responseStatus.changestatus().status() << endl;
 		
 }
 
