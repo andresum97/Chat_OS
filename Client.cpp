@@ -18,6 +18,18 @@
 using namespace std;
 using namespace chat;
 
+void changeStatus(string status, int client){
+	char buffer2[1024];
+	ChangeStatusRequest statusChange;
+	statusChange.set_status(status);
+	printf("Se esta cambiando de status a %s",status);
+	string status;
+	statusChange.SerializeToString(&status);
+	strcpy(buffer2, status.c_str());
+	send(client,buffer2, 1024,0);
+	printf("Status enviado");
+}
+
 void sendInfo(char* user, string ip, int client){
 
 	//MANDAMOS COSAS EN EL BUFFER2 RECIBIMOS EN EL 1
@@ -54,7 +66,7 @@ void sendInfo(char* user, string ip, int client){
 
 	printf("MANDANDO EL PASO 3 DEL 3 WAY\n");
 	MyInfoAcknowledge infoAcknowlege;
-	infoAcknowlege.set_userid(45);
+	infoAcknowlege.set_userid(infoResponse.userid());
 	string infoAck;
 	infoAcknowlege.SerializeToString(&infoAck);
 	strcpy(buffer2, infoAck.c_str());

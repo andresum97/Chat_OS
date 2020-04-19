@@ -23,6 +23,7 @@ void * serverThread(void *arg){
 
 	//MANDAMOS COSAS EN EL BUFFER1 RECIBIMOS EN EL 2
 	int acc = *((int *)arg);
+	int id = acc;
 	char buffer1[1024], buffer2[1024];
 
 	//strcpy(buffer1, "\n1. Opcion 1 \n2. Opcion 2\n3. Exit\n"); 
@@ -40,7 +41,7 @@ void * serverThread(void *arg){
 	
 	printf("MANDANDO EL PASO 2 DEL 3 WAY\n");
 	MyInfoResponse infoResponse;
-	infoResponse.set_userid(50);
+	infoResponse.set_userid(acc);
 	string infoRes;
 	infoResponse.SerializeToString(&infoRes);
 	strcpy(buffer1, infoRes.c_str());
@@ -83,6 +84,10 @@ void * serverThread(void *arg){
 	}
 	//close(acc);
 	pthread_exit(NULL);
+}
+
+void changeStatus(void *arg){
+	
 }
 
 int main() 
