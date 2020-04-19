@@ -27,7 +27,7 @@ struct User{
 };
 
 
-void changeStatus(void *arg){
+void changeStatus(void *arg,struct User thisUser){
 	int acc = *((int *)arg);
 	char buffer1[1024], buffer2[1024];
 
@@ -43,6 +43,8 @@ void changeStatus(void *arg){
 
 	printf("EL STATUS QUE MANDO ES\n");
 	cout << responseStatus.changestatus().status() << endl;
+	thisUser.status = responseStatus.changestatus().status();
+	cout << "El nuevo estatus " << thisUser.status << endl;
 	
 		
 }
@@ -109,6 +111,7 @@ void * serverThread(void *arg){
 	thisUser.userid =  serverMessage.myinforesponse().userid();
 	strcpy(thisUser.ip_addr,client.synchronize().ip().c_str());
 	thisUser.status = "1"; //Activo
+	printf("El username es %s",thisUser.username);
 	
 	//recv(acc, buffer2, 1024,0);
 	//MyInfoAcknowledge infoAcknowlege;
@@ -128,7 +131,7 @@ void * serverThread(void *arg){
 			printf("Eligio 1\n ");
 			strcpy(buffer1, "1"); 
         	send(acc, buffer1, 256, 0);
-			changeStatus(&acc);
+			changeStatus(&acc,thisUser);
 		} else 
 		if(strcmp(buffer2,"2")==0){
 			printf("Eligio 2\n ");
