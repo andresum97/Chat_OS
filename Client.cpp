@@ -34,8 +34,8 @@ void changeStatus(int client){
 	statusChange->set_status(status);
 
 	ClientMessage clientMessage;
-    clientMessage.set_option(3);
-    clientMessage.set_allocated_changestatus(statusChange);	
+    	clientMessage.set_option(3);
+    	clientMessage.set_allocated_changestatus(statusChange);	
 
 	string newStatus;
 	//SE LO MANDAMOS AL SERVER	
@@ -50,6 +50,22 @@ void changeStatus(int client){
 	send(client,buffer2, 1024,0);
 	printf("Status enviado");
 	//printf("Se esta cambiando de status a %s",status);
+
+	recv(client, buffer1, 1024,0);
+	ServerMessage serverMessage2;
+	string changeStat;
+	serverMessage2.ParseFromString(buffer1);	
+
+	//MyInfoResponse infoResponse;
+	//string infoRes;
+	//infoResponse.ParseFromString(buffer1);
+	printf("RECIBIENDO EL PASO 2 DEL 3 WAY\n");
+	printf("-----------------------------------------------\n");
+	cout<< "La opcion del change es " <<serverMessage2.option()<<endl;
+	cout<< "El Id del user " << serverMessage2.changestatusresponse().userid()<<endl;
+	cout<< "El nuevo Status "<< serverMessage2.changestatusresponse().status()<<endl;
+	printf("-----------------------------------------------\n");
+
 	
 }
 
@@ -107,7 +123,7 @@ void sendInfo(char* user, string ip, int client){
 
 	string msg2;
     clientMessage2.SerializeToString(&msg2);
-	printf("MANDANDO PASO 1 DEL 3 WAY \n");
+	printf("MANDANDO PASO 3 DEL 3 WAY \n");
 	printf("-----------------------------------------------\n");
 	cout<< clientMessage2.option()<<endl;
 	cout<< clientMessage2.acknowledge().userid()<<endl;

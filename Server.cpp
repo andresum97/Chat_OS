@@ -45,6 +45,27 @@ void changeStatus(void *arg,struct User thisUser){
 	cout << "El nuevo estatus " << thisUser.status << endl;
 	printf("\n");
 
+	printf("MANDANDO EL RESPONSE\n");
+	ChangeStatusResponse * responseStatus2 (new ChangeStatusResponse);
+	responseStatus2-> set_userid(acc);
+	responseStatus2-> set_status(thisUser.status);
+	
+	ServerMessage serverMessage2;
+	serverMessage2.set_option(6);
+	serverMessage2.set_allocated_changestatusresponse(responseStatus2);
+	
+	string changeStat;
+	serverMessage2.SerializeToString(&changeStat);
+	strcpy(buffer1, changeStat.c_str());
+	send(acc,buffer1, 1024,0);
+
+	printf("-----------------------------------------------\n");
+	cout<< serverMessage2.option()<<endl;
+	cout<< serverMessage2.changestatusresponse().userid()<<endl;
+	cout<< serverMessage2.changestatusresponse().status()<<endl;
+	printf("-----------------------------------------------\n");
+
+
 	
 		
 }
