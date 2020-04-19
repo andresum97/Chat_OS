@@ -30,7 +30,7 @@ struct User{
 struct User users[10];
 int contUser = 0;
 
-void connectedUsers(void *arg,struct User users){
+void connectedUsers(void *arg,struct User users[]){
 	
 	
 	int acc = *((int *)arg);
@@ -49,23 +49,50 @@ void connectedUsers(void *arg,struct User users){
 	cout << connectedUsers.connectedusers().username() << endl;
 
 	printf("MANDANDO EL RESPONSE\n");
+
+	
+
+	ConnectedUserResponse* connectedResponse (new ConnectedUserResponse);
 	ConnectedUser* usuariosOnline(new ConnectedUser);
-	ConnectedUserResponse * connectedResponse (new ConnectedUserResponse);
-	for(int i = 0; i<sizeof users;i++){
-		usuariosOnline = connectedResponse->add_connectedusers();
+
+	for(int i = 0; i< sizeof users;i++){
 		usuariosOnline -> set_username(users[i].username);
 		usuariosOnline -> set_status(users[i].status);
 		usuariosOnline -> set_userid(users[i].userid);
 		usuariosOnline -> set_ip(users[contUser].ip_addr);
 	}
+	cout<<"El username de users[0] "<< users[0].username<<endl;
+	cout<<"El username de usuariosOnline "<< usuariosOnline.username()<<endl;
+	
+	connectedResponse->add_connectedusers();
+	
+	
 	ServerMessage serverMessage;
 	serverMessage.set_option(5);
-	serverMessage.set_allocated_connecteduserresponse(usuariosOnline);
+	serverMessage.set_allocated_connecteduserresponse(connectedResponse);
+	
+	cout<<"EL username del connectedResponse es: "<< serverMessage.connecteduserresponse().connectedusers(0).username()<< endl;
+
 
 	string userCon;
 	serverMessage.SerializeToString(&userCon);
 	strcpy(buffer1, userCon.c_str());
 	send(acc,buffer1, 1024,0);
+	/*
+	printf("MANDANDO EL RESPONSE\n");
+	ChangeStatusResponse * responseStatus2 (new ChangeStatusResponse);
+	responseStatus2-> set_userid(acc);
+	responseStatus2-> set_status(thisUser.status);
+	
+	ServerMessage serverMessage2;
+	serverMessage2.set_option(6);
+	serverMessage2.set_allocated_changestatusresponse(responseStatus2);
+	
+	string changeStat;
+	serverMessage2.SerializeToString(&changeStat);
+	strcpy(buffer1, changeStat.c_str());
+	send(acc,buffer1, 1024,0);
+	*/
 	
 }
 
@@ -218,7 +245,7 @@ void * serverThread(void *arg){
 			printf("Eligio 4\n ");
 			strcpy(buffer1, "4"); 
         		send(acc, buffer1, 256, 0); 
-				connectedUsers(&acc,*users);
+				connectedUsers(&acc,users);
 		}else 
 		if(strcmp(buffer2,"5")==0){
 			printf("Eligio 5\n ");

@@ -52,7 +52,7 @@ void connectedUsers(int client, char* username){
 	printf("RECIBIENDO LISTA DE USUARIOS\n");
 	printf("-----------------------------------------------\n");
 	cout<< "La opcion del change es " <<serverMessage.option()<<endl;
-	cout<< "El Id del user " << serverMessage.connecteduserresponse().username()<<endl;
+	cout<< "El Id del user " << serverMessage.connecteduserresponse().connectedusers(0).username()<< endl;
 	printf("-----------------------------------------------\n");
 
 
