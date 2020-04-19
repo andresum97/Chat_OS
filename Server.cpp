@@ -19,6 +19,26 @@
 using namespace std;
 using namespace chat;
 
+
+void changeStatus(void *arg){
+	int acc = *((int *)arg);
+	char buffer1[1024], buffer2[1024];
+
+	strcpy(buffer1, "\n1. Activo 1 \n2. Inactivo 2\n3. Ocupado\n"); 
+	send(acc, buffer1, 256, 0);
+	printf("Se envio las opciones\n");
+
+	recv(acc, buffer2, 1024,0);
+	ChangeStatusResponse responseStatus;
+	//responseStatus.set_userid(acc);
+	//responseStatus.set_status(buffer2);
+	responseStatus.ParseFromString(buffer2);
+
+	printf("EL STATUS QUE MANDO ES\n");
+	cout << responseStatus.status() << endl;
+		
+}
+
 void * serverThread(void *arg){
 
 	//MANDAMOS COSAS EN EL BUFFER1 RECIBIMOS EN EL 2
@@ -55,7 +75,7 @@ void * serverThread(void *arg){
 
 	
 	while(strcmp(buffer2,"3")!=0){
-		strcpy(buffer1, "\n1. Opcion 1 \n2. Opcion 2\n3. Exit\n"); 
+		strcpy(buffer1, "\n1. Cambiar Status \n2. Opcion 2\n3. Exit\n"); 
 		send(acc, buffer1, 256, 0);
 		printf("Se envio el Menu\n");
 		
@@ -63,8 +83,9 @@ void * serverThread(void *arg){
 		printf("Client: %s\n",buffer2);
 		if(strcmp(buffer2,"1")==0){
 			printf("Eligio 1\n ");
-			strcpy(buffer1, "Elegiste 1"); 
-        		send(acc, buffer1, 256, 0);
+			strcpy(buffer1, "1"); 
+        	send(acc, buffer1, 256, 0);
+			changeStatus(&acc);
 		} else 
 		if(strcmp(buffer2,"2")==0){
 			printf("Eligio 2\n ");
@@ -86,9 +107,6 @@ void * serverThread(void *arg){
 	pthread_exit(NULL);
 }
 
-void changeStatus(void *arg){
-	
-}
 
 int main() 
 { 

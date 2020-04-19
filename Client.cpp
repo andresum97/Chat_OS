@@ -18,16 +18,31 @@
 using namespace std;
 using namespace chat;
 
-void changeStatus(string status, int client){
-	char buffer2[1024];
-	ChangeStatusRequest statusChange;
-	statusChange.set_status(status);
-	printf("Se esta cambiando de status a %s",status);
-	string status;
-	statusChange.SerializeToString(&status);
-	strcpy(buffer2, status.c_str());
+void changeStatus(int client){
+	
+	char buffer1[1024], buffer2[1024];	
+	//string status;
+	//MANDANDO EL MENU DE STATUS
+	recv(client, buffer1, 1024,0);
+	printf("Server : %s\n", buffer1);
+	//PREGUNTA QUE OPCION
+	//scanf("%s",status);
+	ChangeStatusRequest * statusChange(new ChangeStatusRequest);
+	//ChangeStatusRequest statusChange;
+	statusChange->set_status("69");
+	ClientMessage clientMessage;
+    clientMessage.set_option(5);
+	clientMessage.set_userid(12);
+    clientMessage.set_allocated_changestatus(statusChange);	
+
+	string newStatus;
+	//SE LO MANDAMOS AL SERVER	
+	clientMessage.SerializeToString(&newStatus);
+	strcpy(buffer2, newStatus.c_str());
 	send(client,buffer2, 1024,0);
 	printf("Status enviado");
+	//printf("Se esta cambiando de status a %s",status);
+	
 }
 
 void sendInfo(char* user, string ip, int client){
@@ -142,7 +157,10 @@ int main(int argc, char *argv[]){
 		strcpy(buffer2, chr); 
 			send(client, buffer2, 256, 0);
 		recv(client, buffer1, 256, 0); 
-		printf("Server : %s\n", buffer1);
+		//printf("Server : %s\n", buffer1);
+		if(strcmp(buffer1,"1")==0){
+			changeStatus(client);		
+		}		
 		scanf("%c",&chr);
     }
 	google::protobuf::ShutdownProtobufLibrary();
