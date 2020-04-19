@@ -30,7 +30,7 @@ struct User{
 struct User users[10];
 int contUser = 0;
 
-void connectedUsers(void *arg,struct User users[]){
+void connectedUsers(void *arg,struct User users[10]){
 	
 	
 	int acc = *((int *)arg);
@@ -56,16 +56,17 @@ void connectedUsers(void *arg,struct User users[]){
 	ConnectedUser* usuariosOnline(new ConnectedUser);
 
 	for(int i = 0; i< sizeof users;i++){
+		usuariosOnline = connectedResponse->add_connectedusers();
 		usuariosOnline -> set_username(users[i].username);
 		usuariosOnline -> set_status(users[i].status);
 		usuariosOnline -> set_userid(users[i].userid);
 		usuariosOnline -> set_ip(users[contUser].ip_addr);
 	}
 	cout<<"El username de users[0] "<< users[0].username<<endl;
-	cout<<"El username de usuariosOnline "<< usuariosOnline.username()<<endl;
 	
-	connectedResponse->add_connectedusers();
 	
+	
+	//cout<<"El username de usuariosOnline "<< connectedResponse.usuariosOnline()<<endl;
 	
 	ServerMessage serverMessage;
 	serverMessage.set_option(5);
