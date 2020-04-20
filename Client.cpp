@@ -18,7 +18,25 @@
 using namespace std;
 using namespace chat;
 
-	
+
+string Status(string state){
+	string res;	
+	cout << "Llego state " << state << endl;
+	if(state == "1"){
+		res = "Activo";
+	}else
+	if(state == "2"){
+		res = "Inactivo";
+	}else
+	if(state == "3"){
+		res == "Ocupado";
+	}else{
+		res == "Llego esto: "+state;
+	}
+
+	return res;
+}
+
 void * listenThread(void *arg){
 
 	//MANDAMOS COSAS EN EL BUFFER1 RECIBIMOS EN EL 2
@@ -54,7 +72,7 @@ void * listenThread(void *arg){
 			cout<<"Hay un total de " <<max<<" usuarios conectados" <<endl;
 			for(int i = 0; i<max; i++){
 				cout<< "Username:" << serverMessage.connecteduserresponse().connectedusers(i).username()<< endl;
-				cout<< "Estado:" << serverMessage.connecteduserresponse().connectedusers(i).status()<< endl;
+				cout<< "Estado:" << Status(serverMessage.connecteduserresponse().connectedusers(i).status())<< endl;
 			}
 			//cout<< "La opcion del change es " <<serverMessage.option()<<endl;
 	
@@ -64,6 +82,7 @@ void * listenThread(void *arg){
 		}
 	}
 }
+
 void directMessage(int client){
 	char buffer1[1024], buffer2[1024];
 	DirectMessageRequest * directMessage(new DirectMessageRequest);
