@@ -48,9 +48,8 @@ void * listenThread(void *arg){
 			cout<< "La opcion del change es " <<serverMessage.option()<<endl;
 	
 			printf("-----------------------------------------------\n");
-		} else if(serverMessage.option() == 2){
-			printf("EL MENSAJE DE SERVER MESSAGE ES: ");
-			cout<< serverMessage.message().message() << endl;
+		} else if(serverMessage.option() == 2){	
+		cout<<"|"<<serverMessage.message().username()<<"|--> " << serverMessage.message().message() << endl;
 		}
 	}
 }

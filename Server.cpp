@@ -48,6 +48,7 @@ void directMessage(void *arg,struct User users[10]){
 	char buffer1[1024], buffer2[1024];
 	recv(acc, buffer2, 1024,0);
 	int idClient = -1;
+	string sender = "";
 	ClientMessage clientmessage;
 	clientmessage.ParseFromString(buffer2);
 	string message = clientmessage.directmessage().message();
@@ -63,13 +64,19 @@ void directMessage(void *arg,struct User users[10]){
 			break;
 		}
 	}
+	for(int i = 0; i< contUser; i++){
+		if(acc == users[i].userid){
+			sender = users[i].username;
+			break;
+		}
+	}
 	if(idClient == -1){
 		cout << "No se encontro el username" << endl;
 	}else{
 		DirectMessage * directMessage(new DirectMessage);
 		directMessage -> set_message(clientmessage.directmessage().message());
 		directMessage -> set_userid(idClient);
-		
+		directMessage -> set_username(sender);
 		ServerMessage serverMessage;
 		serverMessage.set_option(2);
 		serverMessage.set_allocated_message(directMessage);
