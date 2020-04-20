@@ -375,23 +375,23 @@ int main(int argc, char *argv[]){
 			//recv(client, buffer1, 256, 0); 
 			//printf("Server : %s\n", buffer1);
 			if(strcmp(buffer1,"1")==0){
-				send(client, buffer1, 256, 0);
+				//send(client, buffer1, 256, 0);
 				changeStatus(client);		
 			}else
 			if(strcmp(buffer1,"2")==0){
-				send(client, buffer1, 256, 0);
+				//send(client, buffer1, 256, 0);
 				broadcastMessage(client);		
 			} else
 			if(strcmp(buffer1,"3")==0){
-				send(client, buffer1, 256, 0);
+				//send(client, buffer1, 256, 0);
 				directMessage(client);		
 			} else
 			if(strcmp(buffer1,"4")==0){
-				send(client, buffer1, 256, 0);
+				//send(client, buffer1, 256, 0);
 	connectedUsers(client,username);		
 			} else
 			if(strcmp(buffer1,"5")==0){
-				send(client, buffer1, 256, 0);
+				//send(client, buffer1, 256, 0);
 				getInfo(client);		
 			} else
 			if(strcmp(buffer1,"6")==0){
