@@ -43,14 +43,14 @@ void deleteUser(void *arg){
 	}
 	contUser -= 1;
 }
-void directMessage(void *arg,struct User users[10]){
+void directMessage(void *arg,struct User users[10],ClientMessage clientmessage){
 	int acc = *((int *)arg);
 	char buffer1[1024], buffer2[1024];
-	recv(acc, buffer2, 1024,0);
+	//recv(acc, buffer2, 1024,0);
 	int idClient = -1;
 	string sender = "";
-	ClientMessage clientmessage;
-	clientmessage.ParseFromString(buffer2);
+	//ClientMessage clientmessage;
+	//clientmessage.ParseFromString(buffer2);
 	string message = clientmessage.directmessage().message();
 	string username = clientmessage.directmessage().username();
 	printf("Este es el mensaje del usuario\n");
@@ -101,13 +101,13 @@ void directMessage(void *arg,struct User users[10]){
 	}
 }
 
-void broadcastMessage(void *arg,struct User users[10],string m){
+void broadcastMessage(void *arg,struct User users[10],ClientMessage broadcastRequest){
 	int acc = *((int *)arg);
 	char buffer1[1024], buffer2[1024];
 
-	recv(acc, buffer2, 1024,0);
-	ClientMessage broadcastRequest;
-	broadcastRequest.ParseFromString(buffer2);
+	//recv(acc, buffer2, 1024,0);
+	//ClientMessage broadcastRequest;
+	//broadcastRequest.ParseFromString(buffer2);
 	printf("EL BROADCAST QUE MANDO ES\n");
 	cout << broadcastRequest.broadcast().message() << endl;
 	cout << "El usuario es: "<<users[acc-4].username <<endl;
@@ -142,16 +142,16 @@ void broadcastMessage(void *arg,struct User users[10],string m){
 }
 
 
-void connectedUsers(void *arg,struct User users[10]){
+void connectedUsers(void *arg,struct User users[10],ClientMessage connectedUsers){
 	
 	
 	int acc = *((int *)arg);
 	char buffer1[1024], buffer2[1024];
 	int flag = 0;
-	recv(acc, buffer2, 1024,0);
+	//recv(acc, buffer2, 1024,0);
 	
-	ClientMessage connectedUsers;
-	connectedUsers.ParseFromString(buffer2);
+	//ClientMessage connectedUsers;
+	//connectedUsers.ParseFromString(buffer2);
 	printf("EL USUARIO QUE PIDIO LA LISTA ES\n");
 	cout << "buffer" << buffer2<< endl;
 	cout << connectedUsers.connectedusers().username() << endl;
@@ -209,13 +209,13 @@ void connectedUsers(void *arg,struct User users[10]){
 }
 
 
-void changeStatus(void *arg,struct User users[10]){
+void changeStatus(void *arg,struct User users[10], ClientMessage responseStatus){
 	int acc = *((int *)arg);
-	char buffer1[1024], buffer2[1024];
+	char buffer1[1024];//, buffer2[1024];
 
-	recv(acc, buffer2, 1024,0);
-	ClientMessage responseStatus;
-	responseStatus.ParseFromString(buffer2);
+	//recv(acc, buffer2, 1024,0);
+	//ClientMessage responseStatus;
+	//responseStatus.ParseFromString(buffer2);
 
 	printf("EL STATUS QUE MANDO ES\n");
 	cout << responseStatus.changestatus().status() << endl;
@@ -345,25 +345,20 @@ void * serverThread(void *arg){
 	
 	while(strcmp(buffer2,"7")!=0){
 		recv(acc, buffer2, 1024,0);
-		printf("Client: %s\n",buffer2);
-		if(strcmp(buffer2,"1")==0){
-			changeStatus(&acc,users);
+		ClientMessage clientMessage;
+		clientMessage.ParseFromString(buffer2);
+		printf("Client: %d\n",clientMessage.option());
+		if(clientMessage.option() == 3){
+			changeStatus(&acc,users,clientMessage);
 		} else 
-		if(strcmp(buffer2,"2")==0){
-			broadcastMessage(&acc,users,buffer2);
+		if(clientMessage.option() == 4){
+			broadcastMessage(&acc,users,clientMessage);
 		} else 
-		if(strcmp(buffer2,"3")==0){
-			directMessage(&acc,users); 
+		if(clientMessage.option() == 5){
+			directMessage(&acc,users,clientMessage); 
 		}else 
-		if(strcmp(buffer2,"4")==0){
-			connectedUsers(&acc,users);
-		}else 
-		if(strcmp(buffer2,"5")==0){
-			connectedUsers(&acc,users); 
-		}else 
-		if(strcmp(buffer2,"6")==0){
-			printf("Eligio 6\n "); 
-         
+		if(clientMessage.option() == 2){
+			connectedUsers(&acc,users,clientMessage);
 		}else 
 		if(strcmp(buffer2,"7")==0){
 			printf("Eligio 7\n ");
@@ -439,3 +434,4 @@ int main()
 	google::protobuf::ShutdownProtobufLibrary();
     return 0; 
 } 
+
