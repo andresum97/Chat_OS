@@ -90,17 +90,57 @@ void directMessage(void *arg,struct User users[10]){
 
 
 /*
-
 	printf("-----------------------------------------------\n");
 	cout<< serverMessage2.option()<<endl;
 	cout<< serverMessage2.changestatusresponse().userid()<<endl;
 	cout<< serverMessage2.changestatusresponse().status()<<endl;
 	printf("-----------------------------------------------\n");
-
 	*/
 
 
 }
+
+void broadcastMessage(void *arg,struct User users[10],string m){
+	int acc = *((int *)arg);
+	char buffer1[1024], buffer2[1024];
+
+	recv(acc, buffer2, 1024,0);
+	ClientMessage broadcastRequest;
+	broadcastRequest.ParseFromString(buffer2);
+	printf("EL BROADCAST QUE MANDO ES\n");
+	cout << broadcastRequest.broadcast().message() << endl;
+	cout << "El usuario es: "<<users[acc-4].username <<endl;
+
+	BroadcastResponse * response(new BroadcastResponse);
+	response->set_messagestatus("Send");
+	
+	ServerMessage * serverMessage(new ServerMessage);
+	serverMessage->set_option(7);
+	serverMessage->set_allocated_broadcastresponse(response);
+
+	string message;
+	serverMessage->SerializeToString(&message);
+	strcpy(buffer1, message.c_str());
+	send(acc,buffer1,1024,0);
+	string con = users[acc-4].username;
+	con = con + ": ";
+	con = con + broadcastRequest.broadcast().message();
+	BroadcastMessage * broadcastMsg(new BroadcastMessage);
+	broadcastMsg->set_message(con);
+	broadcastMsg->set_userid(acc);
+
+	ServerMessage *msg(new ServerMessage);
+	msg->set_option(1);
+	msg->set_allocated_broadcast(broadcastMsg);
+	msg->SerializeToString(&message);
+	for (int i = 0; i<10; i++){
+		strcpy(buffer1, message.c_str());
+		send(users[i].userid,buffer1,1024,0);
+	}
+
+}
+
+
 void connectedUsers(void *arg,struct User users[10]){
 	
 	
@@ -266,7 +306,7 @@ void * serverThread(void *arg){
 			changeStatus(&acc,users);
 		} else 
 		if(strcmp(buffer2,"2")==0){
-			printf("Eligio 2\n ");
+			broadcastMessage(&acc,users,buffer2);
 		} else 
 		if(strcmp(buffer2,"3")==0){
 			directMessage(&acc,users); 
@@ -334,7 +374,7 @@ int main()
     addr_size = sizeof(struct sockaddr_in); 
       
     char *ip; 
-    pthread_t tid[2];
+    pthread_t tid[10];
     int i = 0;
 	bool activo = true;
     while (activo) 
@@ -358,9 +398,9 @@ int main()
 		strcpy(buffer2, "0");
 		if (pthread_create(&tid[i], NULL, serverThread, &acc) != 0)
 			printf("Fallo\n");
-	
+		i = i + 1;
         
     }  
 	google::protobuf::ShutdownProtobufLibrary();
     return 0; 
-} 
+}
