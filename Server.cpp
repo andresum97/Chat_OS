@@ -153,6 +153,7 @@ void connectedUsers(void *arg,struct User users[10]){
 	ClientMessage connectedUsers;
 	connectedUsers.ParseFromString(buffer2);
 	printf("EL USUARIO QUE PIDIO LA LISTA ES\n");
+	cout << "buffer" << buffer2<< endl;
 	cout << connectedUsers.connectedusers().username() << endl;
 	
 	printf("MANDANDO EL RESPONSE\n");
@@ -264,10 +265,31 @@ void * serverThread(void *arg){
 	cout<< client.synchronize().username()<<endl;
 	cout<< client.synchronize().ip()<<endl;
 	printf("-----------------------------------------------\n");
-	
+	//VALIDACION DE USUARIO-------------		
+		int val = 0;
 	printf("MANDANDO EL PASO 2 DEL 3 WAY\n");
 	MyInfoResponse * responseInfo(new MyInfoResponse);
-	responseInfo-> set_userid(acc);
+	for(int i = 0; i < contUser; i++){
+		if(client.synchronize().username() == users[i].username){
+			val = -1;
+			break;
+		}
+	}
+	cout << "El valor de val es: " << val << endl;
+	if(val == -1){
+		cout << "Encontro un usuario que es igual" << endl;
+		responseInfo-> set_userid(-1);
+	}else{
+		cout << "Es diferente" << endl;
+		users[contUser].username = client.synchronize().username();
+		strcpy(users[contUser].ip_addr,client.synchronize().ip().c_str());
+		users[contUser].userid = acc;
+		users[contUser].status = "1";
+		contUser++;
+		cout << "la cantidad de usuarios es"<<contUser<<endl;
+		responseInfo-> set_userid(acc);
+	}
+	//responseInfo-> set_userid(acc);
 	
 	ServerMessage serverMessage;
 	serverMessage.set_option(4);
@@ -408,13 +430,6 @@ int main()
         printf("connection established with IP : %s and PORT : %d\n",  
                                             ip, ntohs(peer_addr.sin_port)); 
 		recv(acc, bufferU, 256,0); //SE RECIBE USUARIO
-		users[contUser].username = bufferU;
-		cout << "el bufferU" << bufferU << endl;
-		strcpy(users[contUser].ip_addr,ip);
-		users[contUser].userid = acc;
-		users[contUser].status = "1";
-		contUser++;
-		cout << "la cantidad de usuarios es"<<contUser<<endl;
 		strcpy(buffer2, "0");
 		if (pthread_create(&tid[i], NULL, serverThread, &acc) != 0)
 			printf("Fallo\n");

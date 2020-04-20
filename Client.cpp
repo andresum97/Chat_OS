@@ -14,6 +14,7 @@
 #include <bits/stdc++.h>
 #include <arpa/inet.h>
 #include <chrono>
+#include <unistd.h>
 #include "mensaje.pb.h"
 using namespace std;
 using namespace chat;
@@ -226,7 +227,7 @@ void help(){
 	cout << "---------------------------HELP---------------------------- " << endl;
 }
 
-void sendInfo(char* user, string ip, int client){
+int sendInfo(char* user, string ip, int client){
 
 	//MANDAMOS COSAS EN EL BUFFER2 RECIBIMOS EN EL 1
 	char buffer1[1024], buffer2[1024];
@@ -268,8 +269,10 @@ void sendInfo(char* user, string ip, int client){
 	cout << serverMessage.option() << endl;
 	cout << serverMessage.myinforesponse().userid() << endl;
 	printf("-----------------------------------------------\n");
-
-	printf("MANDANDO EL PASO 3 DEL 3 WAY\n");
+	if(serverMessage.myinforesponse().userid() == -1){
+		return -1;
+	}else{
+		printf("MANDANDO EL PASO 3 DEL 3 WAY\n");
 	
 	MyInfoAcknowledge * infoAck(new MyInfoAcknowledge);
 	infoAck->set_userid(serverMessage.myinforesponse().userid());
@@ -287,7 +290,8 @@ void sendInfo(char* user, string ip, int client){
 	printf("-----------------------------------------------\n");
 	strcpy(buffer2, msg2.c_str());
     send(client, buffer2, msg2.size()+1,0);
-	
+	}	
+	return 1;
 }
 
 int main(int argc, char *argv[]){
@@ -296,6 +300,7 @@ int main(int argc, char *argv[]){
     char* username;
     char* ip;
     char* port;
+    int end;
     char buffer1[256], buffer2[256], bufferU[256]; 
     struct sockaddr_in my_addr, my_addr1; 
     int client = socket(AF_INET, SOCK_STREAM, 0); 
@@ -349,50 +354,56 @@ int main(int argc, char *argv[]){
     //====================================================================================================================
     char chr[257];
     pthread_t tid;
+    int threeway;
 	strcpy(bufferU,username);
 	//cout <<"el buffer2 es "<< buffer2<<endl;
 	send(client, bufferU, 256, 0);
-	sendInfo(username, ip, client);
-	if (pthread_create(&tid, NULL, listenThread, &client) != 0)
+	threeway = sendInfo(username, ip, client);
+	if(threeway == -1){
+		end = close(client);
+		cout << "El usuario esta repetido" << endl;
+	}else{
+		if (pthread_create(&tid, NULL, listenThread, &client) != 0)
 			printf("Fallo\n");
 	
-    while(strcmp(buffer1,"Exit")!=0){
-		
-		printf("\n1. Cambiar Status \n2. Chatear con Todos \n3. Mensaje Directo\n4. Lista de Usuarios Conectados\n5. Informacion de Usuario\n6. Ayuda\n7. Exit\n");
-		scanf("%s",&chr);
-		strcpy(buffer1, chr); 
-		//send(client, buffer2, 256, 0);
-		//recv(client, buffer1, 256, 0); 
-		//printf("Server : %s\n", buffer1);
-		if(strcmp(buffer1,"1")==0){
-			send(client, buffer1, 256, 0);
-			changeStatus(client);		
-		}else
-		if(strcmp(buffer1,"2")==0){
-			send(client, buffer1, 256, 0);
-			broadcastMessage(client);		
-		} else
-		if(strcmp(buffer1,"3")==0){
-			send(client, buffer1, 256, 0);
-			directMessage(client);		
-		} else
-		if(strcmp(buffer1,"4")==0){
-			send(client, buffer1, 256, 0);
-			connectedUsers(client,username);		
-		} else
-		if(strcmp(buffer1,"5")==0){
-			send(client, buffer1, 256, 0);
-			getInfo(client);		
-		} else
-		if(strcmp(buffer1,"6")==0){
-			help();	
-		} else 
-		if(strcmp(buffer1,"7")==0){
-			send(client, buffer1, 256, 0);
-			strcpy(buffer1, "Exit"); 	
-		}
-		//scanf("%c",&chr);
-    }
+	    	while(strcmp(buffer1,"Exit")!=0){
+			
+			printf("\n1. Cambiar Status \n2. Chatear con Todos \n3. Mensaje Directo\n4. Lista de Usuarios Conectados\n5. Informacion de Usuario\n6. Ayuda\n7. Exit\n");
+			scanf("%s",&chr);
+			strcpy(buffer1, chr); 
+			//send(client, buffer2, 256, 0);
+			//recv(client, buffer1, 256, 0); 
+			//printf("Server : %s\n", buffer1);
+			if(strcmp(buffer1,"1")==0){
+				send(client, buffer1, 256, 0);
+				changeStatus(client);		
+			}else
+			if(strcmp(buffer1,"2")==0){
+				send(client, buffer1, 256, 0);
+				broadcastMessage(client);		
+			} else
+			if(strcmp(buffer1,"3")==0){
+				send(client, buffer1, 256, 0);
+				directMessage(client);		
+			} else
+			if(strcmp(buffer1,"4")==0){
+				send(client, buffer1, 256, 0);
+	connectedUsers(client,username);		
+			} else
+			if(strcmp(buffer1,"5")==0){
+				send(client, buffer1, 256, 0);
+				getInfo(client);		
+			} else
+			if(strcmp(buffer1,"6")==0){
+				help();	
+			} else 
+			if(strcmp(buffer1,"7")==0){
+				send(client, buffer1, 256, 0);
+				strcpy(buffer1, "Exit"); 	
+			}
+			//scanf("%c",&chr);
+	    	}
+	}
 	google::protobuf::ShutdownProtobufLibrary();
     return 0; 
 }
