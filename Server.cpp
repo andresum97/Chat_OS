@@ -97,7 +97,7 @@ void connectedUsers(void *arg,struct User users[10]){
 	
 }
 
-void changeStatus(void *arg,struct User thisUser){
+void changeStatus(void *arg,struct User users[10]){
 	int acc = *((int *)arg);
 	char buffer1[1024], buffer2[1024];
 
@@ -111,14 +111,20 @@ void changeStatus(void *arg,struct User thisUser){
 
 	printf("EL STATUS QUE MANDO ES\n");
 	cout << responseStatus.changestatus().status() << endl;
-	thisUser.status = responseStatus.changestatus().status();
-	cout << "El nuevo estatus " << thisUser.status << endl;
+
+	users[acc-4].status = responseStatus.changestatus().status();
+
+//	thisUser.status = responseStatus.changestatus().status();
+
+	cout << "El nuevo estatus " << users[acc-4].status << endl;	
+
+//	cout << "El nuevo estatus " << thisUser.status << endl;
 	printf("\n");
 
 	printf("MANDANDO EL RESPONSE\n");
 	ChangeStatusResponse * responseStatus2 (new ChangeStatusResponse);
 	responseStatus2-> set_userid(acc);
-	responseStatus2-> set_status(thisUser.status);
+	responseStatus2-> set_status(users[acc-4].status);
 	
 	ServerMessage serverMessage2;
 	serverMessage2.set_option(6);
@@ -230,7 +236,7 @@ void * serverThread(void *arg){
 			printf("Eligio 1\n ");
 			strcpy(buffer1, "1"); 
         	send(acc, buffer1, 256, 0);
-			changeStatus(&acc,thisUser);
+			changeStatus(&acc,users);
 		} else 
 		if(strcmp(buffer2,"2")==0){
 			printf("Eligio 2\n ");
