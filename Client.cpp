@@ -44,11 +44,14 @@ void * listenThread(void *arg){
 			for(int i = 0; i<max; i++){
 				cout<< "El username del user " << serverMessage.connecteduserresponse().connectedusers(i).username()<< endl;
 				cout<< "El estado del user " << serverMessage.connecteduserresponse().connectedusers(i).status()<< endl;
-		}
+			}
 			cout<< "La opcion del change es " <<serverMessage.option()<<endl;
 	
 			printf("-----------------------------------------------\n");
-		} 
+		} else if(serverMessage.option() == 2){
+			printf("EL MENSAJE DE SERVER MESSAGE ES: ");
+			cout<< serverMessage.message().message() << endl;
+		}
 	}
 }
 void directMessage(int client){

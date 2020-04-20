@@ -47,27 +47,42 @@ void directMessage(void *arg,struct User users[10]){
 	int acc = *((int *)arg);
 	char buffer1[1024], buffer2[1024];
 	recv(acc, buffer2, 1024,0);
-	
+	int idClient = -1;
 	ClientMessage clientmessage;
 	clientmessage.ParseFromString(buffer2);
+	string message = clientmessage.directmessage().message();
+	string username = clientmessage.directmessage().username();
 	printf("Este es el mensaje del usuario\n");
 	cout << clientmessage.directmessage().message()<<endl;
 	printf("Y va para \n");
 	cout << clientmessage.directmessage().username()<<endl;
 
-	DirectMessage * directMessage(new DirectMessage);
-	directMessage -> set_message(clientmessage.directmessage().message());
-	directMessage -> set_userid("FALTA");
-	
-	ServerMessage serverMessage;
-	serverMessage.set_option(2);
-	serverMessage.set_allocated_directMessage(directMessage);
-	
-	string mensaje;
-	
-	serverMessage.SerializeToString(&mensaje);
-	strcpy(buffer1, mensaje.c_str());
-	send("FALTA",buffer1, 1024,0);
+	for(int i = 0; i < contUser; i++){
+		if(users[i].username == username){
+			idClient = users[i].userid;
+			break;
+		}
+	}
+	if(idClient == -1){
+		cout << "No se encontro el username" << endl;
+	}else{
+		DirectMessage * directMessage(new DirectMessage);
+		directMessage -> set_message(clientmessage.directmessage().message());
+		directMessage -> set_userid(idClient);
+		
+		ServerMessage serverMessage;
+		serverMessage.set_option(2);
+		serverMessage.set_allocated_message(directMessage);
+		
+		string mensaje;
+		
+		serverMessage.SerializeToString(&mensaje);
+		strcpy(buffer1, mensaje.c_str());
+		send(idClient,buffer1, 1024,0);
+	}
+
+
+/*
 
 	printf("-----------------------------------------------\n");
 	cout<< serverMessage2.option()<<endl;
@@ -75,7 +90,7 @@ void directMessage(void *arg,struct User users[10]){
 	cout<< serverMessage2.changestatusresponse().status()<<endl;
 	printf("-----------------------------------------------\n");
 
-	
+	*/
 
 
 }
