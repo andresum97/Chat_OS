@@ -18,6 +18,39 @@
 using namespace std;
 using namespace chat;
 
+void * listenThread(void *arg){
+
+	//MANDAMOS COSAS EN EL BUFFER1 RECIBIMOS EN EL 2
+	int acc = *((int *)arg);
+	char buffer1[1024], buffer2[1024];
+	ServerMessage serverMessage;
+	string changeStat;
+	while(1){
+		recv(acc, buffer1, 1024,0);
+
+		serverMessage.ParseFromString(buffer1);
+		if(serverMessage.option() == 6){
+			printf("-----------------------------------------------\n");
+			cout<< "La opcion del change es " <<serverMessage.option()<<endl;
+			cout<< "El Id del user " << serverMessage.changestatusresponse().userid()<<endl;
+			cout<< "El nuevo Status "<< serverMessage.changestatusresponse().status()<<endl;
+			printf("-----------------------------------------------\n");
+		} else if(serverMessage.option() == 5){
+			printf("RECIBIENDO LISTA DE USUARIOS\n");
+			printf("-----------------------------------------------\n");
+			int max = serverMessage.connecteduserresponse().connectedusers().size();
+			cout<<"cuandtos usuarios hay " <<max<<endl;
+			for(int i = 0; i<max; i++){
+				cout<< "El username del user " << serverMessage.connecteduserresponse().connectedusers(i).username()<< endl;
+				cout<< "El estado del user " << serverMessage.connecteduserresponse().connectedusers(i).status()<< endl;
+		}
+			cout<< "La opcion del change es " <<serverMessage.option()<<endl;
+	
+			printf("-----------------------------------------------\n");
+		} 
+	}
+}
+
 
 void connectedUsers(int client, char* username){
 	
@@ -40,28 +73,6 @@ void connectedUsers(int client, char* username){
 	send(client,buffer2, 1024,0);
 	
 	printf("ConnectUsers enviado\n");
-
-	recv(client, buffer1, 1024,0);
-	ServerMessage serverMessage;
-	string userCon;
-	serverMessage.ParseFromString(buffer1);	
-
-	//MyInfoResponse infoResponse;
-	//string infoRes;
-	//infoResponse.ParseFromString(buffer1);
-	printf("RECIBIENDO LISTA DE USUARIOS\n");
-	printf("-----------------------------------------------\n");
-	int max = serverMessage.connecteduserresponse().connectedusers().size();
-	cout<<"cuandtos usuarios hay " <<max<<endl;
-	for(int i = 0; i<max; i++){
-		cout<< "El username del user " << serverMessage.connecteduserresponse().connectedusers(i).username()<< endl;
-		cout<< "El estado del user " << serverMessage.connecteduserresponse().connectedusers(i).status()<< endl;
-		}
-	cout<< "La opcion del change es " <<serverMessage.option()<<endl;
-	
-	printf("-----------------------------------------------\n");
-
-
 	
 }
 
@@ -70,8 +81,7 @@ void changeStatus(int client){
 	char buffer1[1024], buffer2[1024];	
 	char status[10];
 	//MANDANDO EL MENU DE STATUS
-	recv(client, buffer1, 1024,0);
-	printf("Server : %s\n", buffer1);
+	printf("\n1. Activo 1 \n2. Inactivo 2\n3. Ocupado\n");
 	//PREGUNTA QUE OPCION
 	scanf("%s",status);
 	printf("El status seleccionado es : %s \n",status);
@@ -98,22 +108,6 @@ void changeStatus(int client){
 	printf("Status enviado\n");
 	//printf("Se esta cambiando de status a %s",status);
 
-	recv(client, buffer1, 1024,0);
-	ServerMessage serverMessage2;
-	string changeStat;
-	serverMessage2.ParseFromString(buffer1);	
-
-	//MyInfoResponse infoResponse;
-	//string infoRes;
-	//infoResponse.ParseFromString(buffer1);
-	printf("RECIBIENDO EL PASO 2 DEL 3 WAY\n");
-	printf("-----------------------------------------------\n");
-	cout<< "La opcion del change es " <<serverMessage2.option()<<endl;
-	cout<< "El Id del user " << serverMessage2.changestatusresponse().userid()<<endl;
-	cout<< "El nuevo Status "<< serverMessage2.changestatusresponse().status()<<endl;
-	printf("-----------------------------------------------\n");
-
-	
 }
 
 void sendInfo(char* user, string ip, int client){
@@ -238,25 +232,33 @@ int main(int argc, char *argv[]){
         printf("Error in Connection\n"); 
     //====================================================================================================================
     char chr[257];
+    pthread_t tid;
 	strcpy(bufferU,username);
 	//cout <<"el buffer2 es "<< buffer2<<endl;
 	send(client, bufferU, 256, 0);
 	sendInfo(username, ip, client);
-
+	if (pthread_create(&tid, NULL, listenThread, &client) != 0)
+			printf("Fallo\n");
+	
     while(strcmp(buffer1,"Exit")!=0){
 		
-		recv(client, buffer1, 256, 0); 
-		printf("Server : %s\n", buffer1);
+		printf("\n1. Cambiar Status \n2. Chatear con Todos \n3. Mensaje Directo\n4. Lista de Usuarios Conectados\n5. Informacion de Usuario\n6. Ayuda\n7. Exit\n");
 		scanf("%s",&chr);
-		strcpy(buffer2, chr); 
-			send(client, buffer2, 256, 0);
-		recv(client, buffer1, 256, 0); 
+		strcpy(buffer1, chr); 
+		//send(client, buffer2, 256, 0);
+		//recv(client, buffer1, 256, 0); 
 		//printf("Server : %s\n", buffer1);
 		if(strcmp(buffer1,"1")==0){
+			send(client, buffer1, 256, 0);
 			changeStatus(client);		
 		}else
 		if(strcmp(buffer1,"4")==0){
+			send(client, buffer1, 256, 0);
 			connectedUsers(client,username);		
+		} else 
+		if(strcmp(buffer1,"7")==0){
+			send(client, buffer1, 256, 0);
+			strcpy(buffer1, "Exit"); 	
 		}
 		scanf("%c",&chr);
     }
