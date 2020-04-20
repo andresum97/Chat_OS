@@ -30,13 +30,24 @@ void * listenThread(void *arg){
 		recv(acc, buffer1, 1024,0);
 
 		serverMessage.ParseFromString(buffer1);
-		if(serverMessage.option() == 6){
+		if(serverMessage.option() == 1){
+			printf("-----------------------------------------------\n");
+			cout<< "Broadcast de Usuario: " <<serverMessage.broadcast().userid()<<endl;
+			cout<< ""<<serverMessage.broadcast().message()<<endl;
+			printf("-----------------------------------------------\n");
+		}
+		else if(serverMessage.option() == 6){
 			printf("-----------------------------------------------\n");
 			cout<< "La opcion del change es " <<serverMessage.option()<<endl;
 			cout<< "El Id del user " << serverMessage.changestatusresponse().userid()<<endl;
 			cout<< "El nuevo Status "<< serverMessage.changestatusresponse().status()<<endl;
 			printf("-----------------------------------------------\n");
-		} else if(serverMessage.option() == 5){
+		}else if(serverMessage.option() == 7){
+			printf("RECIBIENDO CONFIRMACION DE BROADCAST\n");
+			printf("-----------------------------------------------\n");
+			cout<< "El estado del mensaje que enviaste " <<serverMessage.broadcastresponse().messagestatus()<<endl;
+			printf("-----------------------------------------------\n");
+		}else if(serverMessage.option() == 5){
 			printf("RECIBIENDO LISTA DE USUARIOS\n");
 			printf("-----------------------------------------------\n");
 			int max = serverMessage.connecteduserresponse().connectedusers().size();
@@ -84,6 +95,29 @@ void directMessage(int client){
 	
 }
 
+void broadcastMessage(int client){
+	char buffer1[1024], buffer2[1024];
+	string mensaje;
+	//printf("\nIngrese el mensaje \n");
+	//getchar();
+	cout<<"\nIngrese el mensaje \n"<<endl;
+	getline(cin,mensaje);
+	//printf("%s",mensaje);
+	BroadcastRequest *broadcast = new BroadcastRequest();
+	broadcast->set_message(mensaje);
+
+	ClientMessage clientMessage;
+	clientMessage.set_option(4);
+	clientMessage.set_allocated_broadcast(broadcast);
+
+	string message;
+	clientMessage.SerializeToString(&message);
+
+	strcpy(buffer2, message.c_str());
+	send(client,buffer2,1024,0);
+	printf("Broadcast Enviado\n");
+}
+
 void connectedUsers(int client, char* username){
 	
 	char buffer1[1024], buffer2[1024];
@@ -105,6 +139,27 @@ void connectedUsers(int client, char* username){
 	send(client,buffer2, 1024,0);
 	
 	printf("ConnectUsers enviado\n");
+	
+}
+
+void getInfo(int client){
+	char buffer1[1024], buffer2[1024];
+	string username;
+	//printf("\nIngrese el username \n");
+	//getchar();
+	cout<<"\nIngrese el usuario \n"<<endl;
+	getline(cin,username);
+	connectedUserRequest *userRequest = new connectedUserRequest();
+	userRequest->set_username (username);
+	ClientMessage clientMessage;
+	clientMessage.set_option(2);
+	clientMessage.set_allocated_connectedusers (userRequest);
+	string info;
+	clientMessage.SerializeToString(&info);
+	strcpy(buffer2, info.c_str());
+	send(client,buffer2, 1024,0);
+	
+	printf("GetInfo enviado\n");
 	
 }
 
@@ -293,6 +348,10 @@ int main(int argc, char *argv[]){
 			send(client, buffer1, 256, 0);
 			changeStatus(client);		
 		}else
+		if(strcmp(buffer1,"2")==0){
+			send(client, buffer1, 256, 0);
+			broadcastMessage(client);		
+		} else
 		if(strcmp(buffer1,"3")==0){
 			send(client, buffer1, 256, 0);
 			directMessage(client);		
@@ -301,6 +360,10 @@ int main(int argc, char *argv[]){
 			send(client, buffer1, 256, 0);
 			connectedUsers(client,username);		
 		} else
+		if(strcmp(buffer1,"5")==0){
+			send(client, buffer1, 256, 0);
+			getInfo(client);		
+		} else
 		if(strcmp(buffer1,"6")==0){
 			help();	
 		} else 
@@ -308,7 +371,7 @@ int main(int argc, char *argv[]){
 			send(client, buffer1, 256, 0);
 			strcpy(buffer1, "Exit"); 	
 		}
-		scanf("%c",&chr);
+		//scanf("%c",&chr);
     }
 	google::protobuf::ShutdownProtobufLibrary();
     return 0; 
