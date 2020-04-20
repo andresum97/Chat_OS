@@ -112,8 +112,8 @@ void broadcastMessage(int client){
 	char buffer1[1024], buffer2[1024];
 	string mensaje;
 	//printf("\nIngrese el mensaje \n");
-	//getchar();
 	cout<<"\nIngrese el mensaje \n"<<endl;
+	getchar();
 	getline(cin,mensaje);
 	//printf("%s",mensaje);
 	BroadcastRequest *broadcast = new BroadcastRequest();
