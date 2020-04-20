@@ -120,8 +120,8 @@ void connectedUsers(void *arg,struct User users[10]){
 
 	ConnectedUserResponse* connectedResponse (new ConnectedUserResponse);
 	ConnectedUser* usuariosOnline(new ConnectedUser);
-	cout<< sizeof users << " aaaaaaaaaaaaa" << endl;
-	cout<< contUser << " asaaaaaaaaaaaaa" << endl;
+	//cout<< sizeof users << " aaaaaaaaaaaaa" << endl;
+	//cout<< contUser << " asaaaaaaaaaaaaa" << endl;
 	for(int i = 0; i< contUser;i++){
 		usuariosOnline = connectedResponse->add_connectedusers();
 		usuariosOnline -> set_username(users[i].username);
@@ -280,9 +280,8 @@ void * serverThread(void *arg){
         		send(acc, buffer1, 256, 0); 
 		}else 
 		if(strcmp(buffer2,"6")==0){
-			printf("Eligio 6\n ");
-			strcpy(buffer1, "Elegiste 6"); 
-        		send(acc, buffer1, 256, 0); 
+			printf("Eligio 6\n "); 
+         
 		}else 
 		if(strcmp(buffer2,"7")==0){
 			printf("Eligio 7\n ");

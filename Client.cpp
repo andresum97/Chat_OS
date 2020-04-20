@@ -40,12 +40,12 @@ void * listenThread(void *arg){
 			printf("RECIBIENDO LISTA DE USUARIOS\n");
 			printf("-----------------------------------------------\n");
 			int max = serverMessage.connecteduserresponse().connectedusers().size();
-			cout<<"cuandtos usuarios hay " <<max<<endl;
+			cout<<"Hay un total de " <<max<<" usuarios conectados" <<endl;
 			for(int i = 0; i<max; i++){
-				cout<< "El username del user " << serverMessage.connecteduserresponse().connectedusers(i).username()<< endl;
-				cout<< "El estado del user " << serverMessage.connecteduserresponse().connectedusers(i).status()<< endl;
+				cout<< "Username:" << serverMessage.connecteduserresponse().connectedusers(i).username()<< endl;
+				cout<< "Estado:" << serverMessage.connecteduserresponse().connectedusers(i).status()<< endl;
 			}
-			cout<< "La opcion del change es " <<serverMessage.option()<<endl;
+			//cout<< "La opcion del change es " <<serverMessage.option()<<endl;
 	
 			printf("-----------------------------------------------\n");
 		} else if(serverMessage.option() == 2){	
@@ -140,6 +140,15 @@ void changeStatus(int client){
 	printf("Status enviado\n");
 	//printf("Se esta cambiando de status a %s",status);
 
+}
+void help(){
+	cout << "---------------------------HELP---------------------------- " << endl;
+	
+	cout << "-Recuerda que para el mensaje directo se manda 'USERNAME' espacio 'MENSAJE DIRECTO' " << endl;
+	cout << "-Recuerda el mensaje directo solo lo vera el user que escojas" << endl;
+	cout << "-Si quieres cambiar tu status selecciona 1 para Activo, 2 para Inactivo y 3 para Ocupado" << endl; 
+	cout << "-Si quieres ver la informacion de un usuario selecciona la opcion 5" << endl; 
+	cout << "---------------------------HELP---------------------------- " << endl;
 }
 
 void sendInfo(char* user, string ip, int client){
@@ -291,6 +300,9 @@ int main(int argc, char *argv[]){
 		if(strcmp(buffer1,"4")==0){
 			send(client, buffer1, 256, 0);
 			connectedUsers(client,username);		
+		} else
+		if(strcmp(buffer1,"6")==0){
+			help();	
 		} else 
 		if(strcmp(buffer1,"7")==0){
 			send(client, buffer1, 256, 0);
