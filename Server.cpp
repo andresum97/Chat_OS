@@ -50,8 +50,32 @@ void directMessage(void *arg,struct User users[10]){
 	
 	ClientMessage clientmessage;
 	clientmessage.ParseFromString(buffer2);
-	printf("este es el mensaje del usuario\n");
+	printf("Este es el mensaje del usuario\n");
 	cout << clientmessage.directmessage().message()<<endl;
+	printf("Y va para \n");
+	cout << clientmessage.directmessage().username()<<endl;
+
+	DirectMessage * directMessage(new DirectMessage);
+	directMessage -> set_message(clientmessage.directmessage().message());
+	directMessage -> set_userid("FALTA");
+	
+	ServerMessage serverMessage;
+	serverMessage.set_option(2);
+	serverMessage.set_allocated_directMessage(directMessage);
+	
+	string mensaje;
+	
+	serverMessage.SerializeToString(&mensaje);
+	strcpy(buffer1, mensaje.c_str());
+	send("FALTA",buffer1, 1024,0);
+
+	printf("-----------------------------------------------\n");
+	cout<< serverMessage2.option()<<endl;
+	cout<< serverMessage2.changestatusresponse().userid()<<endl;
+	cout<< serverMessage2.changestatusresponse().status()<<endl;
+	printf("-----------------------------------------------\n");
+
+	
 
 
 }
