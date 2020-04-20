@@ -18,6 +18,7 @@
 using namespace std;
 using namespace chat;
 
+	
 void * listenThread(void *arg){
 
 	//MANDAMOS COSAS EN EL BUFFER1 RECIBIMOS EN EL 2
@@ -50,7 +51,33 @@ void * listenThread(void *arg){
 		} 
 	}
 }
-
+void directMessage(int client){
+	char buffer1[1024], buffer2[1024];
+	DirectMessageRequest * directMessage(new DirectMessageRequest);
+	string newMensaje;
+	string newUsername;
+	cout<<"Ingrese el usuario a quien desea enviar mensaje directo"<<endl;
+	//getline(cin,newUsername);
+	scanf("%[^\n]",newUsername);
+	//fgets(newUsername,1024,stdin);
+	cout<<"Ingrese el mensaje privado"<<endl;
+	//getline(cin,newMensaje);
+	scanf("%[^\n]",newMensaje);
+	//fgets(newMensaje,1024,stdin);
+	cout<<"se esta mandando"<< newMensaje << endl;
+	directMessage->set_message(newMensaje);
+	directMessage->set_username(newUsername);
+	ClientMessage clientMessage;
+    	clientMessage.set_option(5);
+    	clientMessage.set_allocated_directmessage(directMessage);
+	string mensaje;
+	clientMessage.SerializeToString(&mensaje);
+	strcpy(buffer2, mensaje.c_str());
+	send(client,buffer2, 1024,0);
+	
+	printf("Mensaje Privado enviado\n");
+	
+}
 
 void connectedUsers(int client, char* username){
 	
@@ -252,6 +279,10 @@ int main(int argc, char *argv[]){
 			send(client, buffer1, 256, 0);
 			changeStatus(client);		
 		}else
+		if(strcmp(buffer1,"3")==0){
+			send(client, buffer1, 256, 0);
+			directMessage(client);		
+		} else
 		if(strcmp(buffer1,"4")==0){
 			send(client, buffer1, 256, 0);
 			connectedUsers(client,username);		

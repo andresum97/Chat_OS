@@ -43,8 +43,18 @@ void deleteUser(void *arg){
 	}
 	contUser -= 1;
 }
+void directMessage(void *arg,struct User users[10]){
+	int acc = *((int *)arg);
+	char buffer1[1024], buffer2[1024];
+	recv(acc, buffer2, 1024,0);
+	
+	ClientMessage clientmessage;
+	clientmessage.ParseFromString(buffer2);
+	printf("este es el mensaje del usuario\n");
+	cout << clientmessage.directmessage().message()<<endl;
 
 
+}
 void connectedUsers(void *arg,struct User users[10]){
 	
 	
@@ -213,9 +223,7 @@ void * serverThread(void *arg){
 			printf("Eligio 2\n ");
 		} else 
 		if(strcmp(buffer2,"3")==0){
-			printf("Eligio 3\n ");
-			strcpy(buffer1, "Elegiste 3"); 
-        		send(acc, buffer1, 256, 0); 
+			directMessage(&acc,users); 
 		}else 
 		if(strcmp(buffer2,"4")==0){
 			connectedUsers(&acc,users);
