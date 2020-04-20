@@ -72,7 +72,9 @@ void * listenThread(void *arg){
 	
 			printf("-----------------------------------------------\n");
 		} else if(serverMessage.option() == 2){	
-		cout<<"|"<<serverMessage.message().username()<<"|--> " << serverMessage.message().message() << endl;
+			printf("--------------------------------MENSAJE PRIVADO--------------------------------------------------\n");		
+			cout<<"|"<<serverMessage.message().username()<<"|--> " << serverMessage.message().message() << endl;
+			printf("--------------------------------MENSAJE PRIVADO--------------------------------------------------\n");
 		}
 	}
 }
@@ -81,14 +83,11 @@ void directMessage(int client){
 	char buffer1[1024], buffer2[1024];
 	DirectMessageRequest * directMessage(new DirectMessageRequest);
 	string newMensaje, newUsername;
-	cout<<" "<<endl;
-	getline(cin,newUsername);
-	//scanf("%[^\n]",newUsername);
-	//fgets(newUsername,1024,stdin);
-	cout<<"Ingrese el usuario a quien desea enviar mensaje directo"<<endl;
+	
+	cout<<"\nIngrese el mensaje \n"<<endl;
+	getchar();
 	getline(cin,newMensaje);
-	//scanf("%[^\n]",newMensaje);
-	//fgets(newMensaje,1024,stdin);
+	
 	int pos = newMensaje.find(" ");
 	newUsername = newMensaje.substr(0,pos);
 	newMensaje = newMensaje.substr(pos,newMensaje.size());
