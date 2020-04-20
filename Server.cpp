@@ -1,3 +1,21 @@
+
+
+Skip to content
+Using Gmail with screen readers
+
+1 of 5,479
+(no subject)
+Inbox
+x
+
+Miguel Valle <hectormiguelvalle@gmail.com>
+Attachments
+2:12 PM (0 minutes ago)
+to me
+
+
+2 Attachments
+
 #include<stdio.h> 
 #include<sys/types.h> 
 #include<sys/socket.h> 
@@ -146,30 +164,50 @@ void connectedUsers(void *arg,struct User users[10]){
 	
 	int acc = *((int *)arg);
 	char buffer1[1024], buffer2[1024];
-	
+	int flag = 0;
 	recv(acc, buffer2, 1024,0);
 	
 	ClientMessage connectedUsers;
 	connectedUsers.ParseFromString(buffer2);
 	printf("EL USUARIO QUE PIDIO LA LISTA ES\n");
 	cout << connectedUsers.connectedusers().username() << endl;
-
-	printf("MANDANDO EL RESPONSE\n");
-
 	
+	printf("MANDANDO EL RESPONSE\n");
 
 	ConnectedUserResponse* connectedResponse (new ConnectedUserResponse);
 	ConnectedUser* usuariosOnline(new ConnectedUser);
+	char cstr[connectedUsers.connectedusers().username().size()+1];
+	strcpy(cstr,connectedUsers.connectedusers().username().c_str());
 	//cout<< sizeof users << " aaaaaaaaaaaaa" << endl;
 	//cout<< contUser << " asaaaaaaaaaaaaa" << endl;
-	for(int i = 0; i< contUser;i++){
-		usuariosOnline = connectedResponse->add_connectedusers();
-		usuariosOnline -> set_username(users[i].username);
-		usuariosOnline -> set_status(users[i].status);
-		usuariosOnline -> set_userid(users[i].userid);
-		usuariosOnline -> set_ip(users[i].ip_addr);
+	if (strcmp(cstr,users[acc-4].username.c_str())==0){
+		for(int i = 0; i< contUser;i++){
+			usuariosOnline = connectedResponse->add_connectedusers();
+			usuariosOnline -> set_username(users[i].username);
+			usuariosOnline -> set_status(users[i].status);
+			usuariosOnline -> set_userid(users[i].userid);
+			usuariosOnline -> set_ip(users[i].ip_addr);
+		}
+		cout<<"El username de users[0] "<< users[0].username<<endl;
+	}else{
+		for(int i = 0; i< contUser;i++){
+			if (strcmp(cstr,users[i].username.c_str())==0){
+				usuariosOnline = connectedResponse->add_connectedusers();
+				usuariosOnline -> set_username(users[i].username);
+				usuariosOnline -> set_status(users[i].status);
+				usuariosOnline -> set_userid(users[i].userid);
+				usuariosOnline -> set_ip(users[i].ip_addr);
+				flag = 1;
+			}
+		}
+		if(flag < 1){
+				usuariosOnline = connectedResponse->add_connectedusers();
+				usuariosOnline -> set_username("No existe");
+				usuariosOnline -> set_status("");
+				usuariosOnline -> set_userid(-1);
+				usuariosOnline -> set_ip("");
+		}
 	}
-	cout<<"El username de users[0] "<< users[0].username<<endl;
 	
 	ServerMessage serverMessage;
 	serverMessage.set_option(5);
@@ -182,6 +220,7 @@ void connectedUsers(void *arg,struct User users[10]){
 	serverMessage.SerializeToString(&userCon);
 	strcpy(buffer1, userCon.c_str());
 	send(acc,buffer1, 1024,0);
+	
 	
 }
 
@@ -315,9 +354,7 @@ void * serverThread(void *arg){
 			connectedUsers(&acc,users);
 		}else 
 		if(strcmp(buffer2,"5")==0){
-			printf("Eligio 5\n ");
-			strcpy(buffer1, "Elegiste 5"); 
-        		send(acc, buffer1, 256, 0); 
+			connectedUsers(&acc,users); 
 		}else 
 		if(strcmp(buffer2,"6")==0){
 			printf("Eligio 6\n "); 
@@ -403,4 +440,4 @@ int main()
     }  
 	google::protobuf::ShutdownProtobufLibrary();
     return 0; 
-}
+} 
