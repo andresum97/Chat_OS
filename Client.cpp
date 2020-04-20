@@ -50,23 +50,27 @@ void * listenThread(void *arg){
 		}else if(serverMessage.option() == 5){
 			printf("RECIBIENDO LISTA DE USUARIOS\n");
 			printf("-----------------------------------------------\n");
-			int max = serverMessage.connecteduserresponse().connectedusers().size();
-			cout<<"Hay un total de " <<max<<" usuarios conectados" <<endl;
-			for(int i = 0; i<max; i++){
-				cout<< "Username:" << serverMessage.connecteduserresponse().connectedusers(i).username()<< endl;
-				string estadoN = serverMessage.connecteduserresponse().connectedusers(i).status();
-				if(estadoN == "1"){
-					cout<< "Estado: Activo"<< endl;
-				}else
-				if(estadoN == "2"){
-					cout<< "Estado: Inactivo"<< endl;
-				}else
-				if(estadoN == "3"){
-					cout<< "Estado: Ocupado" << endl;
-				}else{
-					cout<< "Llego esto: "<< estadoN << endl;
+			if(strcmp(serverMessage.connecteduserresponse().connectedusers(0).username().c_str(),"No existe")!=0){
+				int max = serverMessage.connecteduserresponse().connectedusers().size();
+				cout<<"Hay un total de " <<max<<" usuarios conectados" <<endl;
+				for(int i = 0; i<max; i++){
+					cout<< "Username:" << serverMessage.connecteduserresponse().connectedusers(i).username()<< endl;
+					string estadoN = serverMessage.connecteduserresponse().connectedusers(i).status();
+					if(estadoN == "1"){
+						cout<< "Estado: Activo"<< endl;
+					}else
+					if(estadoN == "2"){
+						cout<< "Estado: Inactivo"<< endl;
+					}else
+					if(estadoN == "3"){
+						cout<< "Estado: Ocupado" << endl;
+					}else{
+						cout<< "Llego esto: "<< estadoN << endl;
+					}
+					
 				}
-				
+			}else{
+				cout<< "No existe usuario con ese nombre " <<endl;
 			}
 			//cout<< "La opcion del change es " <<serverMessage.option()<<endl;
 	
@@ -87,7 +91,7 @@ void directMessage(int client){
 	cout<<"\nIngrese el mensaje \n"<<endl;
 	getchar();
 	getline(cin,newMensaje);
-	
+
 	int pos = newMensaje.find(" ");
 	newUsername = newMensaje.substr(0,pos);
 	newMensaje = newMensaje.substr(pos,newMensaje.size());
@@ -158,8 +162,8 @@ void getInfo(int client){
 	char buffer1[1024], buffer2[1024];
 	string username;
 	//printf("\nIngrese el username \n");
-	//getchar();
 	cout<<"\nIngrese el usuario \n"<<endl;
+	getchar();
 	getline(cin,username);
 	connectedUserRequest *userRequest = new connectedUserRequest();
 	userRequest->set_username (username);
