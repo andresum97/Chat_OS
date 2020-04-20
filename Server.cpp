@@ -54,13 +54,14 @@ void connectedUsers(void *arg,struct User users[10]){
 
 	ConnectedUserResponse* connectedResponse (new ConnectedUserResponse);
 	ConnectedUser* usuariosOnline(new ConnectedUser);
-
-	for(int i = 0; i< sizeof users;i++){
+	cout<< sizeof users << " aaaaaaaaaaaaa" << endl;
+	cout<< contUser << " asaaaaaaaaaaaaa" << endl;
+	for(int i = 0; i< contUser;i++){
 		usuariosOnline = connectedResponse->add_connectedusers();
 		usuariosOnline -> set_username(users[i].username);
 		usuariosOnline -> set_status(users[i].status);
 		usuariosOnline -> set_userid(users[i].userid);
-		usuariosOnline -> set_ip(users[contUser].ip_addr);
+		usuariosOnline -> set_ip(users[i].ip_addr);
 	}
 	cout<<"El username de users[0] "<< users[0].username<<endl;
 	
@@ -333,6 +334,7 @@ int main()
 		users[contUser].userid = acc;
 		users[contUser].status = "1";
 		contUser++;
+		cout << "la cantidad de usuarios es "<<contUser<<endl;
 		strcpy(buffer2, "0");
 		if (pthread_create(&tid[i], NULL, serverThread, &acc) != 0)
 			printf("Fallo\n");

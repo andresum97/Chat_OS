@@ -51,11 +51,14 @@ void connectedUsers(int client, char* username){
 	//infoResponse.ParseFromString(buffer1);
 	printf("RECIBIENDO LISTA DE USUARIOS\n");
 	printf("-----------------------------------------------\n");
+	int max = serverMessage.connecteduserresponse().connectedusers().size();
+	cout<<"cuandtos usuarios hay " <<max<<endl;
+	for(int i = 0; i<max; i++){
+		cout<< "El username del user " << serverMessage.connecteduserresponse().connectedusers(i).username()<< endl;
+		cout<< "El estado del user " << serverMessage.connecteduserresponse().connectedusers(i).status()<< endl;
+		}
 	cout<< "La opcion del change es " <<serverMessage.option()<<endl;
-	cout<< "El username del user " << serverMessage.connecteduserresponse().connectedusers(0).username()<< endl;
-	cout<< "El estado del user " << serverMessage.connecteduserresponse().connectedusers(0).status()<< endl;
-	cout<< "La ip del user " << serverMessage.connecteduserresponse().connectedusers(0).ip()<< endl;
-cout<< "El id del user " << serverMessage.connecteduserresponse().connectedusers(0).userid()<< endl;
+	
 	printf("-----------------------------------------------\n");
 
 
