@@ -76,9 +76,13 @@ void * listenThread(void *arg){
 	
 			printf("-----------------------------------------------\n");
 		} else if(serverMessage.option() == 2){	
-			printf("--------------------------------MENSAJE PRIVADO--------------------------------------------------\n");		
+			printf("--------------------------------MENSAJE PRIVADO---------------------------------------------\n");		
 			cout<<"|"<<serverMessage.message().username()<<"|--> " << serverMessage.message().message() << endl;
-			printf("--------------------------------MENSAJE PRIVADO--------------------------------------------------\n");
+			printf("--------------------------------MENSAJE PRIVADO---------------------------------------------\n");
+		} else if(serverMessage.option() == 3){	
+			printf("--------------------------------ERROR---------------------------------------------\n");		
+			cout<<serverMessage.error().errormessage()<< endl;
+			printf("--------------------------------ERROR---------------------------------------------\n");
 		}
 	}
 }

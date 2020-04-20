@@ -72,6 +72,18 @@ void directMessage(void *arg,struct User users[10]){
 	}
 	if(idClient == -1){
 		cout << "No se encontro el username" << endl;
+		ErrorResponse * responseE(new ErrorResponse);
+		responseE->set_errormessage("Este username no existe amigo.");
+		
+		ServerMessage * serverMessageE(new ServerMessage);
+		serverMessageE->set_option(3);
+		serverMessageE->set_allocated_error(responseE);
+
+		string messageE;
+		serverMessageE->SerializeToString(&messageE);
+		strcpy(buffer1, messageE.c_str());
+		send(acc,buffer1,1024,0);
+			
 	}else{
 		DirectMessage * directMessage(new DirectMessage);
 		directMessage -> set_message(clientmessage.directmessage().message());
@@ -87,17 +99,6 @@ void directMessage(void *arg,struct User users[10]){
 		strcpy(buffer1, mensaje.c_str());
 		send(idClient,buffer1, 1024,0);
 	}
-
-
-/*
-	printf("-----------------------------------------------\n");
-	cout<< serverMessage2.option()<<endl;
-	cout<< serverMessage2.changestatusresponse().userid()<<endl;
-	cout<< serverMessage2.changestatusresponse().status()<<endl;
-	printf("-----------------------------------------------\n");
-	*/
-
-
 }
 
 void broadcastMessage(void *arg,struct User users[10],string m){
