@@ -1,21 +1,3 @@
-
-
-Skip to content
-Using Gmail with screen readers
-
-1 of 5,479
-(no subject)
-Inbox
-x
-
-Miguel Valle <hectormiguelvalle@gmail.com>
-Attachments
-2:12 PM (0 minutes ago)
-to me
-
-
-2 Attachments
-
 #include<stdio.h> 
 #include<sys/types.h> 
 #include<sys/socket.h> 
