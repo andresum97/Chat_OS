@@ -30,6 +30,21 @@ struct User{
 struct User users[10];
 int contUser = 0;
 
+void deleteUser(void *arg){
+	int acc = *((int *)arg);
+	int i,j;
+	for(i = 0; i < contUser; i++){
+		if(users[i].userid == acc){
+			for(j=i; j<(contUser-1);j++){
+				users[j] = users[j+1];
+			}
+			break;
+		}
+	}
+	contUser -= 1;
+}
+
+
 void connectedUsers(void *arg,struct User users[10]){
 	
 	
@@ -217,8 +232,10 @@ void * serverThread(void *arg){
 		}else 
 		if(strcmp(buffer2,"7")==0){
 			printf("Eligio 7\n ");
-			strcpy(buffer1, "El usuario salio"); 
+			strcpy(buffer1, "El usuario salio");
+			deleteUser(&acc);
         		send(acc, buffer1, 256, 0); 
+			
 		}else{
 			printf("%s",buffer2);
 			strcpy(buffer1, "Opcion no valida"); 
