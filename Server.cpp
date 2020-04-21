@@ -378,10 +378,19 @@ void * serverThread(void *arg){
 }
 
 
-int main() 
+int main(int argc, char *argv[]) 
 { 
     GOOGLE_PROTOBUF_VERIFY_VERSION;
-    char buffer1[256], buffer2[256], bufferU[256]; 
+    char buffer1[256], buffer2[256], bufferU[256];
+	char* port;
+	int puerto = 8080;
+	if(argc>=2){
+		port = argv[1];
+		puerto = atoi(port);
+		cout << "El puerto ingresado es :" << puerto << endl;
+	}else{
+		printf("No se ingreso el puerto con el cual trabajar, se trabajara con el puerto 8080 \n");
+	}  
     int server = socket(AF_INET, SOCK_STREAM, 0); 
     if (server < 0) 
         printf("Error in server creating\n"); 
@@ -395,7 +404,7 @@ int main()
 
     my_addr.sin_addr.s_addr = inet_addr("192.168.100.4"); 
       
-    my_addr.sin_port = htons(8080); 
+    my_addr.sin_port = htons(puerto); 
   
     if (bind(server, (struct sockaddr*) &my_addr, sizeof(my_addr)) == 0) 
         printf("Binded Correctly\n"); 

@@ -93,7 +93,7 @@ void directMessage(int client){
 	DirectMessageRequest * directMessage(new DirectMessageRequest);
 	string newMensaje, newUsername;
 	
-	cout<<"\nIngrese el mensaje \n"<<endl;
+	cout<<"Ingrese el usuario y luego separado por un espacio el mensaje |usuario mensaje| \n"<<endl;
 	getchar();
 	getline(cin,newMensaje);
 
