@@ -57,18 +57,9 @@ void * listenThread(void *arg){
 				for(int i = 0; i<max; i++){
 					cout<< "Username:" << serverMessage.connecteduserresponse().connectedusers(i).username()<< endl;
 					string estadoN = serverMessage.connecteduserresponse().connectedusers(i).status();
-					if(estadoN == "1"){
-						cout<< "Estado: Activo"<< endl;
-					}else
-					if(estadoN == "2"){
-						cout<< "Estado: Inactivo"<< endl;
-					}else
-					if(estadoN == "3"){
-						cout<< "Estado: Ocupado" << endl;
-					}else{
-						cout<< "Llego esto: "<< estadoN << endl;
-					}
 					
+					cout<< "Estado: " << estadoN << endl;
+		
 				}
 			}else{
 				cout<< "No existe usuario con ese nombre " <<endl;
@@ -100,8 +91,8 @@ void directMessage(int client){
 	int pos = newMensaje.find(" ");
 	newUsername = newMensaje.substr(0,pos);
 	newMensaje = newMensaje.substr(pos,newMensaje.size());
-	cout<<"El destinatarios es "<< newUsername << endl;
-	cout<<"El privado es "<< newMensaje << endl;
+	//cout<<"El destinatarios es "<< newUsername << endl;
+	//cout<<"El privado es "<< newMensaje << endl;
 	directMessage->set_message(newMensaje);
 	directMessage->set_username(newUsername);
 	ClientMessage clientMessage;
@@ -149,7 +140,8 @@ void connectedUsers(int client, char* username){
 	//scanf("%s",enter);
 
 	connectedUserRequest * connectedUsers(new connectedUserRequest);
-	connectedUsers->set_username(username);
+	connectedUsers->set_userid(0);
+
 	ClientMessage clientMessage;
     	clientMessage.set_option(2);
     	clientMessage.set_allocated_connectedusers(connectedUsers);
@@ -189,10 +181,10 @@ void changeStatus(int client){
 	char buffer1[1024], buffer2[1024];	
 	char status[10];
 	//MANDANDO EL MENU DE STATUS
-	printf("\n1. Activo 1 \n2. Inactivo 2\n3. Ocupado\n");
+	printf("Ingrese su nuevo estatus\n");
 	//PREGUNTA QUE OPCION
 	scanf("%s",status);
-	printf("El status seleccionado es : %s \n",status);
+	//printf("El status seleccionado es : %s \n",status);
 	cout << "El status seleccionado es " << status << endl;
 	ChangeStatusRequest * statusChange(new ChangeStatusRequest);
 	//ChangeStatusRequest statusChange;
@@ -355,9 +347,9 @@ int main(int argc, char *argv[]){
     char chr[257];
     pthread_t tid;
     int threeway;
-	strcpy(bufferU,username);
+	//strcpy(bufferU,username);
 	//cout <<"el buffer2 es "<< buffer2<<endl;
-	send(client, bufferU, 256, 0);
+	//send(client, bufferU, 256, 0);
 	threeway = sendInfo(username, ip, client);
 	if(threeway == -1){
 		end = close(client);

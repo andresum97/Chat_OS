@@ -17,6 +17,7 @@
 #include "mensaje.pb.h"
 #include <pthread.h>
 #include <unistd.h>
+#include <typeinfo>
 using namespace std;
 using namespace chat;
 
@@ -153,18 +154,103 @@ void connectedUsers(void *arg,struct User users[10],ClientMessage connectedUsers
 	//ClientMessage connectedUsers;
 	//connectedUsers.ParseFromString(buffer2);
 	printf("EL USUARIO QUE PIDIO LA LISTA ES\n");
-	cout << "buffer" << buffer2<< endl;
 	cout << connectedUsers.connectedusers().username() << endl;
+	printf("EL ID QUE MANDO ES\n");
+	cout << connectedUsers.connectedusers().userid() << endl;
 	
+	printf("TAMANIOS\n");
+	cout << connectedUsers.connectedusers().username().size()<<endl;
+	//cout << connectedUsers.connectedusers().userid().length();
 	printf("MANDANDO EL RESPONSE\n");
-
+	
 	ConnectedUserResponse* connectedResponse (new ConnectedUserResponse);
 	ConnectedUser* usuariosOnline(new ConnectedUser);
 	char cstr[connectedUsers.connectedusers().username().size()+1];
 	strcpy(cstr,connectedUsers.connectedusers().username().c_str());
-	//cout<< sizeof users << " aaaaaaaaaaaaa" << endl;
-	//cout<< contUser << " asaaaaaaaaaaaaa" << endl;
-	if (strcmp(cstr,users[acc-4].username.c_str())==0){
+	//EN CSTR ESTA EL USUARIO QUE PIDIO VER LA LISTA DE USUARIOS
+	//O ESTA EL USUARIO DEL QUE SE QUIERE SU INFORMACION
+	//cout << typeid()
+	//EN users[acc-4].username.c_str() ESTA EL USER DEL THREAD ACTIVO
+
+	//UN IF QUE VEA SI RECIBIO UN USERID O USERNAME O LOS 2
+
+	int optionI = connectedUsers.connectedusers().userid();
+	int userSize = connectedUsers.connectedusers().username().size();
+	cout<<"el usuario pedido es: " << cstr << endl;
+	for(int i = 0; i< contUser;i++){
+		cout<<"el usuario  a buscar: " << users[i].username.c_str() <<endl;
+	}	
+		
+	//SI USERNAME.SIZE ES 0 Y UID ES 0 MUESTRE TODOS
+	//SI USERNAME.SIZE ES 0 Y UID NO ES 0 MUESTRE TODOS
+	//SI USERNAME.SIZE NO ES 0 Y UID ES NO ES 0 MUESTRA EL USERNAME BUSCADO
+	//SI USERNAME.SIZE NO ES 0 Y UID ES 0 MUESTRA EL USERNAME BUSCADO
+	
+	if(optionI == 0){
+		if(userSize==0){
+			printf("MANDANDO TODOS LOS USERS \n");	
+			for(int i = 0; i< contUser;i++){
+				usuariosOnline = connectedResponse->add_connectedusers();
+				usuariosOnline -> set_username(users[i].username);
+				usuariosOnline -> set_status(users[i].status);
+				usuariosOnline -> set_userid(users[i].userid);
+				usuariosOnline -> set_ip(users[i].ip_addr);
+			}	
+		}else{
+			
+
+			printf("MANDANDO USER ESPECIFICO \n");
+			for(int i = 0; i< contUser;i++){
+				if (strcmp(cstr,users[i].username.c_str())==0){
+					usuariosOnline = connectedResponse->add_connectedusers();
+					usuariosOnline -> set_username(users[i].username);
+					usuariosOnline -> set_status(users[i].status);
+					usuariosOnline -> set_userid(users[i].userid);
+					usuariosOnline -> set_ip(users[i].ip_addr);
+					flag = 1;
+				}
+			}
+			if(flag < 1){
+				usuariosOnline = connectedResponse->add_connectedusers();
+				usuariosOnline -> set_username("No existe");
+				usuariosOnline -> set_status("");
+				usuariosOnline -> set_userid(-1);
+				usuariosOnline -> set_ip("");
+			}
+		}
+	}else{
+		if(userSize==0){
+			printf("MANDANDO TODOS LOS USERS \n");
+			for(int i = 0; i< contUser;i++){
+				usuariosOnline = connectedResponse->add_connectedusers();
+				usuariosOnline -> set_username(users[i].username);
+				usuariosOnline -> set_status(users[i].status);
+				usuariosOnline -> set_userid(users[i].userid);
+				usuariosOnline -> set_ip(users[i].ip_addr);
+			}
+		}else{
+			printf("MANDANDO USER ESPECIFICO \n");
+			for(int i = 0; i< contUser;i++){
+				if (strcmp(cstr,users[i].username.c_str())==0){
+					usuariosOnline = connectedResponse->add_connectedusers();
+					usuariosOnline -> set_username(users[i].username);
+					usuariosOnline -> set_status(users[i].status);
+					usuariosOnline -> set_userid(users[i].userid);
+					usuariosOnline -> set_ip(users[i].ip_addr);
+					flag = 1;
+				}
+			}
+			if(flag < 1){
+				usuariosOnline = connectedResponse->add_connectedusers();
+				usuariosOnline -> set_username("No existe");
+				usuariosOnline -> set_status("");
+				usuariosOnline -> set_userid(-1);
+				usuariosOnline -> set_ip("");
+			}
+		}
+	}
+/*
+	if (strcmp(cstr,users[acc-4].username.c_str())==0 || optionI == 0){
 		for(int i = 0; i< contUser;i++){
 			usuariosOnline = connectedResponse->add_connectedusers();
 			usuariosOnline -> set_username(users[i].username);
@@ -172,7 +258,7 @@ void connectedUsers(void *arg,struct User users[10],ClientMessage connectedUsers
 			usuariosOnline -> set_userid(users[i].userid);
 			usuariosOnline -> set_ip(users[i].ip_addr);
 		}
-		cout<<"El username de users[0] "<< users[0].username<<endl;
+		
 	}else{
 		for(int i = 0; i< contUser;i++){
 			if (strcmp(cstr,users[i].username.c_str())==0){
@@ -192,7 +278,7 @@ void connectedUsers(void *arg,struct User users[10],ClientMessage connectedUsers
 				usuariosOnline -> set_ip("");
 		}
 	}
-	
+	*/
 	ServerMessage serverMessage;
 	serverMessage.set_option(5);
 	serverMessage.set_allocated_connecteduserresponse(connectedResponse);
@@ -284,7 +370,7 @@ void * serverThread(void *arg){
 		users[contUser].username = client.synchronize().username();
 		strcpy(users[contUser].ip_addr,client.synchronize().ip().c_str());
 		users[contUser].userid = acc;
-		users[contUser].status = "1";
+		users[contUser].status = "Activo";
 		contUser++;
 		cout << "la cantidad de usuarios es"<<contUser<<endl;
 		responseInfo-> set_userid(acc);
@@ -330,10 +416,14 @@ void * serverThread(void *arg){
 		strcpy(buffer2,"7");
 	}else{
 		printf("REALIZANDO STRUCT DE CLIENTE\n");
-		thisUser.username =  client.synchronize().username();
-		thisUser.userid =  serverMessage.myinforesponse().userid();
-		strcpy(thisUser.ip_addr,client.synchronize().ip().c_str());
-		thisUser.status = "1"; //Activo
+		users[contUser].username =  client.synchronize().username();
+		users[contUser].userid =  serverMessage.myinforesponse().userid();
+		strcpy(users[contUser].ip_addr,client.synchronize().ip().c_str());
+		users[contUser].status = "Activo"; //Activo
+		cout<< "Se creo el usuario con " <<endl;
+		cout<< "username: "<<users[contUser].username  <<endl;
+		cout<< "id: "<<users[contUser].userid  <<endl;
+		cout<< "status: "<<users[contUser].status  <<endl;
 	}
 	
 	//recv(acc, buffer2, 1024,0);
@@ -433,7 +523,7 @@ int main(int argc, char *argv[])
       	
         printf("connection established with IP : %s and PORT : %d\n",  
                                             ip, ntohs(peer_addr.sin_port)); 
-		recv(acc, bufferU, 256,0); //SE RECIBE USUARIO
+		//recv(acc, bufferU, 256,0); //SE RECIBE USUARIO
 		strcpy(buffer2, "0");
 		if (pthread_create(&tid[i], NULL, serverThread, &acc) != 0)
 			printf("Fallo\n");
